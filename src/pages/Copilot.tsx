@@ -108,7 +108,7 @@ export function CopilotPage() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="e.g. How much did I spend on software this year?"
-                className="h-12 w-full rounded-xl border border-ink-200 bg-white pl-11 pr-4 text-sm text-ink-900 shadow-sm placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                className="h-12 w-full rounded-2xl border border-white/[0.09] bg-white/[0.04] pl-11 pr-4 text-sm text-ink-900 transition-all placeholder:text-ink-400 hover:border-white/[0.14] focus:border-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-700/20"
                 aria-label="Ask about your finances"
               />
             </div>
@@ -123,7 +123,7 @@ export function CopilotPage() {
                 key={s}
                 onClick={() => void ask(s)}
                 disabled={thinking}
-                className="rounded-full border border-ink-200 bg-white px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:border-brand-300 hover:text-brand-700 disabled:opacity-60"
+                className="rounded-full border border-white/[0.09] bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:border-brand-700/50 hover:bg-white/[0.07] hover:text-brand-800 disabled:opacity-60"
               >
                 {s}
               </button>
@@ -162,7 +162,7 @@ export function CopilotPage() {
                         <button
                           key={f}
                           onClick={() => void ask(f)}
-                          className="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800 hover:bg-brand-100"
+                          className="rounded-full bg-brand-700/15 px-3 py-1 text-xs font-medium text-brand-900 ring-1 ring-inset ring-brand-700/25 transition-colors hover:bg-brand-700/25"
                         >
                           {f}
                         </button>

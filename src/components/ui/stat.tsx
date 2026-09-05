@@ -17,24 +17,35 @@ export function StatCard({
   className?: string;
 }) {
   const iconTones = {
-    neutral: 'bg-ink-100 text-ink-600',
-    green: 'bg-emerald-100 text-emerald-700',
-    amber: 'bg-amber-100 text-amber-700',
-    red: 'bg-red-100 text-red-700',
-    brand: 'bg-brand-100 text-brand-700',
+    neutral: 'bg-white/[0.06] text-ink-500 ring-white/[0.07]',
+    green: 'bg-emerald-600/12 text-emerald-600 ring-emerald-600/20',
+    amber: 'bg-amber-500/12 text-amber-500 ring-amber-500/20',
+    red: 'bg-red-500/12 text-red-500 ring-red-500/20',
+    brand: 'bg-brand-700/15 text-brand-800 ring-brand-700/25',
   };
   return (
-    <div className={cn('rounded-xl border border-ink-200 bg-white p-5 shadow-card', className)}>
+    <div
+      className={cn(
+        'group rounded-2xl border border-white/[0.07] bg-surface p-5 shadow-card',
+        'transition-colors duration-200 ease-ios hover:border-white/[0.12]',
+        className
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-ink-500">{label}</p>
-          <p className="tabular mt-1.5 truncate text-2xl font-semibold tracking-tight text-ink-900">
+          <p className="text-[13px] font-medium text-ink-500">{label}</p>
+          <p className="tabular mt-2 truncate text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink-900">
             {value}
           </p>
-          {sub && <p className="mt-1 text-xs text-ink-500">{sub}</p>}
+          {sub && <p className="mt-1.5 text-[12px] text-ink-400">{sub}</p>}
         </div>
         {icon && (
-          <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-lg [&>svg]:h-5 [&>svg]:w-5', iconTones[tone])}>
+          <div
+            className={cn(
+              'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-inset [&>svg]:h-5 [&>svg]:w-5',
+              iconTones[tone]
+            )}
+          >
             {icon}
           </div>
         )}

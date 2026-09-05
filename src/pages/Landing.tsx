@@ -99,7 +99,7 @@ const FAQS = [
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black">
       <Seo
         title="FreelanceTax — Tax & Expense Tracking for Freelancers"
         description="FreelanceTax helps freelancers organize income, track expenses, scan receipts, and discover potential deductions throughout the year."
@@ -107,15 +107,15 @@ export function LandingPage() {
       <MarketingNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-ink-900 text-white">
-        <div className="pointer-events-none absolute inset-0 opacity-40 [background:radial-gradient(600px_300px_at_70%_-10%,rgba(95,114,240,0.35),transparent)]" />
+      <section className="relative overflow-hidden bg-black text-ink-900">
+        <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(800px_400px_at_70%_-10%,rgba(112,118,255,0.28),transparent)]" />
         <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:py-24">
           <div>
             <Badge tone="blue" className="mb-4">Made for independent workers</Badge>
             <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
               Stop leaving freelance tax deductions on the table.
             </h1>
-            <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-300">
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-500">
               FreelanceTax helps freelancers organize income, track expenses, scan receipts, and
               discover potential deductions throughout the year.
             </p>
@@ -124,7 +124,7 @@ export function LandingPage() {
                 <Button size="lg">Start free</Button>
               </Link>
               <a href="#how-it-works">
-                <Button size="lg" variant="secondary" className="border-ink-700 bg-transparent text-white hover:bg-white/10">
+                <Button size="lg" variant="secondary" className="border-white/15 bg-transparent text-ink-900 hover:bg-white/10">
                   See how it works
                 </Button>
               </a>
@@ -137,22 +137,22 @@ export function LandingPage() {
           {/* Illustrative dashboard preview (not real user data) */}
           <div aria-hidden="true" className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
             <div className="flex items-center justify-between px-1 pb-3">
-              <div className="text-sm font-medium text-ink-300">Example dashboard</div>
+              <div className="text-sm font-medium text-ink-500">Example dashboard</div>
               <Badge tone="green">PRO</Badge>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-white p-4">
+              <div className="rounded-xl bg-surface p-4">
                 <p className="text-xs text-ink-500">Income · this year</p>
                 <p className="tabular mt-1 text-xl font-semibold text-ink-900">$62,400</p>
                 <p className="mt-1 text-[11px] text-emerald-700">12 payments logged</p>
               </div>
-              <div className="rounded-xl bg-white p-4">
+              <div className="rounded-xl bg-surface p-4">
                 <p className="text-xs text-ink-500">Business expenses</p>
                 <p className="tabular mt-1 text-xl font-semibold text-ink-900">$8,140</p>
                 <p className="mt-1 text-[11px] text-ink-400">after business-use %</p>
               </div>
             </div>
-            <div className="mt-3 rounded-xl bg-white p-4">
+            <div className="mt-3 rounded-xl bg-surface p-4">
               <p className="mb-2 text-xs font-medium text-ink-500">Income by month</p>
               <BarChart
                 data={[
@@ -202,9 +202,9 @@ export function LandingPage() {
           </div>
           <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s) => (
-              <li key={s.n} className="rounded-2xl border border-ink-200 bg-white p-6 shadow-card">
+              <li key={s.n} className="rounded-2xl border border-ink-200 bg-surface p-6 shadow-card">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-100 text-brand-700 [&>svg]:h-5 [&>svg]:w-5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-700/15 text-brand-800 [&>svg]:h-5 [&>svg]:w-5">
                     <s.icon />
                   </div>
                   <span className="text-sm font-semibold text-brand-700">{s.n}</span>
@@ -248,7 +248,7 @@ export function LandingPage() {
             </p>
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-ink-200 bg-white p-8 shadow-card">
+            <div className="rounded-2xl border border-ink-200 bg-surface p-8 shadow-card">
               <p className="text-lg font-semibold text-ink-900">Free</p>
               <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">$0</p>
               <p className="mt-1 text-sm text-ink-500">forever, no card required</p>
@@ -263,7 +263,7 @@ export function LandingPage() {
                 <Button variant="secondary" fullWidth size="lg">Start free</Button>
               </Link>
             </div>
-            <div className="relative rounded-2xl border-2 border-brand-700 bg-white p-8 shadow-pop">
+            <div className="relative rounded-2xl border-2 border-brand-700 bg-surface p-8 shadow-pop">
               <Badge tone="blue" className="absolute -top-3 left-8">MOST POPULAR</Badge>
               <p className="text-lg font-semibold text-ink-900">Pro</p>
               <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">
@@ -294,7 +294,7 @@ export function LandingPage() {
         <h2 className="text-center text-3xl font-semibold tracking-tight text-ink-900">
           Frequently asked questions
         </h2>
-        <div className="mt-8 divide-y divide-ink-200 rounded-2xl border border-ink-200 bg-white px-6 shadow-card">
+        <div className="mt-8 divide-y divide-ink-200 rounded-2xl border border-ink-200 bg-surface px-6 shadow-card">
           {FAQS.map((f) => (
             <details key={f.q} className="group py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-medium text-ink-900">
@@ -308,11 +308,11 @@ export function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-ink-900 px-4 py-16 text-center sm:px-6">
-        <h2 className="text-3xl font-semibold tracking-tight text-white">
+      <section className="bg-surface px-4 py-16 text-center sm:px-6">
+        <h2 className="text-3xl font-semibold tracking-tight text-ink-900">
           Start organizing your freelance finances today.
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-ink-300">
+        <p className="mx-auto mt-3 max-w-xl text-ink-500">
           Set up takes about a minute. Your data stays private and organized — tax season thanks you
           later.
         </p>

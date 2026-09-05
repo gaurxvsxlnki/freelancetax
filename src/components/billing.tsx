@@ -102,7 +102,7 @@ export function UpgradePromptModal({
           </div>
         )}
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700/15 text-brand-800">
             <IconSparkles className="h-5 w-5" />
           </div>
           <div>

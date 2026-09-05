@@ -48,7 +48,7 @@ function ReceiptThumb({ receipt, onClick }: { receipt: Receipt; onClick: () => v
     );
   }
   return (
-    <button onClick={onClick} className="flex h-36 w-full items-center justify-center rounded-t-xl bg-ink-50 text-ink-300" aria-label={`View ${receipt.file_name}`}>
+    <button onClick={onClick} className="flex h-36 w-full items-center justify-center rounded-t-xl bg-white/[0.04] text-ink-400" aria-label={`View ${receipt.file_name}`}>
       <IconFile className="h-12 w-12" />
     </button>
   );
@@ -350,14 +350,14 @@ export function ReceiptsPage() {
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
         className={`mb-6 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
-          dragOver ? 'border-brand-500 bg-brand-50' : 'border-ink-300 bg-white hover:border-brand-400 hover:bg-ink-50'
+          dragOver ? 'border-brand-700 bg-brand-700/10' : 'border-white/15 bg-surface hover:border-brand-700/60 hover:bg-white/[0.05]'
         }`}
         onClick={requestUpload}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); requestUpload(); } }}
       >
-        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-700/15 text-brand-800">
           <IconUpload className="h-6 w-6" />
         </div>
         <p className="text-sm font-medium text-ink-900">
@@ -398,7 +398,7 @@ export function ReceiptsPage() {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search by merchant or file name"
                   aria-label="Search receipts"
-                  className="h-9 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-3 text-sm text-ink-900 shadow-sm placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                  className="h-9 w-full rounded-xl border border-white/[0.09] bg-white/[0.04] pl-9 pr-3 text-sm text-ink-900 transition-all placeholder:text-ink-400 hover:border-white/[0.14] focus:border-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-700/20"
                 />
               </div>
               <Select
@@ -454,7 +454,7 @@ export function ReceiptsPage() {
                 {filtered.map((r) => {
               const meta = STATUS_META[r.processing_status];
               return (
-                <div key={r.id} className="flex flex-col overflow-hidden rounded-xl border border-ink-200 bg-white shadow-card">
+                <div key={r.id} className="flex flex-col overflow-hidden rounded-xl border border-ink-200 bg-surface shadow-card">
                   <ReceiptThumb receipt={r} onClick={() => setViewing(r)} />
                   <div className="flex flex-1 flex-col gap-2 p-4">
                     <div className="flex items-start justify-between gap-2">
@@ -483,7 +483,7 @@ export function ReceiptsPage() {
                         </Button>
                         <button
                           onClick={() => setDeleting(r)}
-                          className="rounded-md p-1.5 text-ink-400 hover:bg-red-50 hover:text-red-600"
+                          className="rounded-md p-1.5 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
                           aria-label={`Delete ${r.file_name}`}
                           title="Delete"
                         >

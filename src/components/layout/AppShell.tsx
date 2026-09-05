@@ -42,7 +42,7 @@ const NAV_SECONDARY = [
 function Brand() {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-700 text-white">
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white shadow-[0_4px_14px_-4px_rgba(112,118,255,0.7)]">
         <svg viewBox="0 0 32 32" className="h-5 w-5" fill="none" aria-hidden="true">
           <path
             d="M16 6v20M10 12h8a4 4 0 0 1 0 8h-8"
@@ -54,7 +54,7 @@ function Brand() {
         </svg>
       </div>
       <div className="leading-tight">
-        <div className="text-[15px] font-semibold tracking-tight text-ink-900">FreelanceTax</div>
+        <div className="text-[15px] font-semibold tracking-[-0.01em] text-ink-900">FreelanceTax</div>
         <div className="text-[11px] text-ink-500">Taxes for independent work</div>
       </div>
     </div>
@@ -64,10 +64,11 @@ function Brand() {
 function NavItems({ onNavigate }: { onNavigate?: () => void }) {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
-      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+      'group relative flex items-center gap-3 rounded-xl px-3 py-2 text-[13.5px] font-medium',
+      'transition-all duration-150 ease-ios active:scale-[0.98]',
       isActive
-        ? 'bg-brand-50 text-brand-800'
-        : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
+        ? 'bg-white/[0.09] text-ink-900 shadow-sm'
+        : 'text-ink-500 hover:bg-white/[0.05] hover:text-ink-900'
     );
 
   return (
@@ -75,16 +76,34 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
       <div className="space-y-1">
         {NAV_MAIN.map((item) => (
           <NavLink key={item.to} to={item.to} className={linkClass} onClick={onNavigate}>
-            <item.icon className="h-[18px] w-[18px]" />
-            {item.label}
+            {({ isActive }) => (
+              <>
+                <item.icon
+                  className={cn(
+                    'h-[18px] w-[18px] shrink-0 transition-colors',
+                    isActive ? 'text-brand-700' : 'text-ink-400 group-hover:text-ink-600'
+                  )}
+                />
+                {item.label}
+              </>
+            )}
           </NavLink>
         ))}
       </div>
-      <div className="space-y-1 border-t border-ink-100 pt-4">
+      <div className="space-y-1 border-t border-white/[0.06] pt-4">
         {NAV_SECONDARY.map((item) => (
           <NavLink key={item.to} to={item.to} className={linkClass} onClick={onNavigate}>
-            <item.icon className="h-[18px] w-[18px]" />
-            {item.label}
+            {({ isActive }) => (
+              <>
+                <item.icon
+                  className={cn(
+                    'h-[18px] w-[18px] shrink-0 transition-colors',
+                    isActive ? 'text-brand-700' : 'text-ink-400 group-hover:text-ink-600'
+                  )}
+                />
+                {item.label}
+              </>
+            )}
           </NavLink>
         ))}
       </div>
@@ -98,25 +117,25 @@ function SidebarFooter() {
   const backend = getBackend();
 
   return (
-    <div className="border-t border-ink-100 p-3">
+    <div className="border-t border-white/[0.06] p-3 pb-safe">
       {backend.isDemo && (
-        <div className="mb-3 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-snug text-amber-900 ring-1 ring-inset ring-amber-200">
+        <div className="mb-3 rounded-xl bg-amber-500/10 px-3 py-2 text-[11.5px] leading-snug text-amber-800 ring-1 ring-inset ring-amber-500/25">
           <strong>Demo mode.</strong> Data stays in this browser. Add your Supabase keys to
           connect a real database.
         </div>
       )}
-      <div className="flex items-center gap-3 rounded-lg px-2 py-1.5">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800">
+      <div className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-white/[0.04]">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-700/20 text-[11px] font-semibold text-brand-900 ring-1 ring-inset ring-brand-700/30">
           {initials(user?.email ?? '?')}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium text-ink-900">{user?.email}</div>
+          <div className="truncate text-[13px] font-medium text-ink-900">{user?.email}</div>
         </div>
         <button
           onClick={() => {
             void signOut().then(() => navigate('/login'));
           }}
-          className="rounded-md p-1.5 text-ink-400 transition-colors hover:bg-red-50 hover:text-red-600"
+          className="shrink-0 rounded-full p-1.5 text-ink-400 transition-colors hover:bg-red-500/15 hover:text-red-500"
           title="Sign out"
           aria-label="Sign out"
         >
@@ -134,15 +153,67 @@ function PlanBadge() {
   );
 }
 
+/** The five destinations surfaced in the native-style mobile tab bar. */
+const TAB_BAR = [
+  { to: '/dashboard', label: 'Home', icon: IconHome },
+  { to: '/income', label: 'Income', icon: IconDollar },
+  { to: '/expenses', label: 'Expenses', icon: IconFile },
+  { to: '/tax-estimate', label: 'Taxes', icon: IconCalculator },
+  { to: '/copilot', label: 'Copilot', icon: IconBot },
+];
+
+/**
+ * iOS-style bottom tab bar (mobile only). Frosted, safe-area aware, with the
+ * tint-on-active treatment familiar from native apps. The drawer remains
+ * available from the header for the full navigation set.
+ */
+function MobileTabBar() {
+  return (
+    <nav
+      className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.08] glass pb-safe lg:hidden"
+      aria-label="Primary"
+    >
+      <div className="mx-auto flex max-w-lg items-stretch justify-around px-1">
+        {TAB_BAR.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className="group flex min-w-0 flex-1 flex-col items-center gap-1 px-1 pb-1.5 pt-2 transition-transform duration-150 ease-ios active:scale-[0.92]"
+          >
+            {({ isActive }) => (
+              <>
+                <item.icon
+                  className={cn(
+                    'h-[22px] w-[22px] shrink-0 transition-colors',
+                    isActive ? 'text-brand-700' : 'text-ink-400'
+                  )}
+                />
+                <span
+                  className={cn(
+                    'w-full truncate text-center text-[10px] font-medium leading-none transition-colors',
+                    isActive ? 'text-brand-700' : 'text-ink-400'
+                  )}
+                >
+                  {item.label}
+                </span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 export function AppShell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-ink-100">
-      {/* Desktop sidebar */}
-      <aside className="no-print fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-ink-200 bg-white lg:flex">
-        <div className="px-4 py-5">
+    <div className="min-h-screen bg-black">
+      {/* Desktop sidebar — frosted, hairline-separated from the canvas. */}
+      <aside className="no-print fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-white/[0.07] bg-surface/80 backdrop-blur-xl lg:flex">
+        <div className="px-4 py-5 pt-safe">
           <Brand />
         </div>
         <NavItems />
@@ -152,13 +223,16 @@ export function AppShell() {
       {/* Mobile drawer */}
       {drawerOpen && (
         <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
-          <div className="absolute inset-0 bg-ink-900/50" onClick={() => setDrawerOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white shadow-pop">
-            <div className="flex items-center justify-between px-4 py-5">
+          <div
+            className="absolute inset-0 animate-fade-in bg-black/70 backdrop-blur-sm"
+            onClick={() => setDrawerOpen(false)}
+          />
+          <aside className="absolute inset-y-0 left-0 flex w-[288px] max-w-[85vw] flex-col border-r border-white/10 bg-surface-2/95 shadow-pop backdrop-blur-2xl">
+            <div className="flex items-center justify-between px-4 py-5 pt-safe">
               <Brand />
               <button
                 onClick={() => setDrawerOpen(false)}
-                className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                className="rounded-full bg-white/[0.06] p-1.5 text-ink-500 transition-colors hover:bg-white/[0.12] hover:text-ink-900"
                 aria-label="Close menu"
               >
                 <IconX className="h-5 w-5" />
@@ -171,12 +245,12 @@ export function AppShell() {
       )}
 
       {/* Main column */}
-      <div className="lg:pl-60">
-        <header className="no-print sticky top-0 z-20 flex h-14 items-center justify-between border-b border-ink-200 bg-white/90 px-4 backdrop-blur sm:px-6">
+      <div className="lg:pl-[248px]">
+        <header className="no-print sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-white/[0.07] glass px-4 pt-safe sm:px-6">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setDrawerOpen(true)}
-              className="rounded-md p-1.5 text-ink-500 hover:bg-ink-100 lg:hidden"
+              className="-ml-1 shrink-0 rounded-full p-2 text-ink-500 transition-colors hover:bg-white/[0.07] hover:text-ink-900 lg:hidden"
               aria-label="Open menu"
             >
               <IconMenu className="h-5 w-5" />
@@ -184,14 +258,14 @@ export function AppShell() {
             <div className="lg:hidden">
               <Brand />
             </div>
-            <div className="hidden text-sm text-ink-500 lg:block">
+            <div className="hidden truncate text-[13px] text-ink-500 lg:block">
               Welcome back, {user?.email?.split('@')[0] ?? 'there'}
             </div>
           </div>
           <div className="flex items-center gap-2">
             <NavLink
               to="/billing"
-              className="rounded-md p-1 transition-colors hover:bg-ink-100"
+              className="rounded-full p-1 transition-transform duration-150 ease-ios active:scale-95"
               aria-label="View plan and billing"
               title="View plan and billing"
             >
@@ -200,10 +274,12 @@ export function AppShell() {
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+        <main className="mx-auto w-full max-w-6xl px-4 py-6 pb-[calc(env(safe-area-inset-bottom,0px)+5.5rem)] sm:px-6 lg:py-8 lg:pb-10">
           <Outlet />
         </main>
       </div>
+
+      <MobileTabBar />
     </div>
   );
 }
@@ -219,9 +295,11 @@ export function PageHeader({
 }) {
   return (
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink-900">{title}</h1>
-        {description && <p className="mt-1 max-w-2xl text-sm text-ink-500">{description}</p>}
+      <div className="min-w-0">
+        <h1 className="text-[28px] font-semibold leading-tight tracking-[-0.022em] text-ink-900">{title}</h1>
+        {description && (
+          <p className="mt-1.5 max-w-2xl text-[13.5px] leading-relaxed text-ink-500">{description}</p>
+        )}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>

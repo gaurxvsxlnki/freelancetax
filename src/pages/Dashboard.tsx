@@ -725,7 +725,7 @@ export function DashboardPage() {
                               <span className="tabular font-medium text-ink-900">{money(p.amount)}</span>
                               <button
                                 onClick={() => setDeletingPayment(p)}
-                                className="rounded p-1 text-ink-400 hover:bg-red-50 hover:text-red-600"
+                                className="rounded p-1 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
                                 aria-label={`Delete payment of ${money(p.amount)}`}
                                 title="Delete"
                               >
@@ -746,7 +746,7 @@ export function DashboardPage() {
                 ) : (
                   <ul className="divide-y divide-ink-100">
                     {stats.deadlineList.map((d) => (
-                      <li key={d.quarterKey} className={cn('flex items-center justify-between gap-3 px-5 py-3', d.daysLeft >= 0 && !d.isPaid && d.daysLeft <= 30 && 'bg-amber-50/50')}>
+                      <li key={d.quarterKey} className={cn('flex items-center justify-between gap-3 px-5 py-3', d.daysLeft >= 0 && !d.isPaid && d.daysLeft <= 30 && 'bg-amber-500/[0.07]')}>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-ink-900">{d.quarterLabel}</span>

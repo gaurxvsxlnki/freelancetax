@@ -1,44 +1,43 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { cn } from '../lib/cn';
 
-export function MarketingLogo({ light = false }: { light?: boolean }) {
+export function MarketingLogo({ light: _light = false }: { light?: boolean }) {
   return (
     <Link to="/" className="flex items-center gap-2.5">
-      <div className={cn('flex h-9 w-9 items-center justify-center rounded-lg', light ? 'bg-brand-600' : 'bg-brand-700 text-white')}>
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white shadow-[0_4px_14px_-4px_rgba(112,118,255,0.7)]">
         <svg viewBox="0 0 32 32" className="h-5 w-5 text-white" fill="none" aria-hidden="true">
           <path d="M16 6v20M10 12h8a4 4 0 0 1 0 8h-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
       <div className="leading-tight">
-        <div className={cn('text-[15px] font-semibold tracking-tight', light ? 'text-white' : 'text-ink-900')}>FreelanceTax</div>
-        <div className={cn('text-[11px]', light ? 'text-ink-400' : 'text-ink-500')}>Taxes for independent work</div>
+        <div className="text-[15px] font-semibold tracking-[-0.01em] text-ink-900">FreelanceTax</div>
+        <div className="text-[11px] text-ink-500">Taxes for independent work</div>
       </div>
     </Link>
   );
 }
 
-export function MarketingNav({ dark = false }: { dark?: boolean }) {
+export function MarketingNav({ dark: _dark = false }: { dark?: boolean }) {
   const { user } = useAuth();
   return (
-    <header className={cn('no-print sticky top-0 z-30 border-b backdrop-blur', dark ? 'border-white/10 bg-ink-900/80' : 'border-ink-200/70 bg-white/85')}>
+    <header className="no-print sticky top-0 z-30 border-b border-white/[0.07] glass pt-safe">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <MarketingLogo light={dark} />
+        <MarketingLogo />
         <nav className="flex items-center gap-1 sm:gap-2" aria-label="Public navigation">
-          <Link to="/pricing" className={cn('rounded-lg px-3 py-2 text-sm font-medium hover:bg-ink-100/50', dark ? 'text-ink-300 hover:text-white' : 'text-ink-700 hover:text-ink-900')}>
+          <Link to="/pricing" className="rounded-full px-3 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-white/[0.07] hover:text-ink-900">
             Pricing
           </Link>
           {user ? (
             <>
               <Link
                 to="/dashboard"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:underline"
+                className="rounded-full px-3 py-2 text-sm font-medium text-brand-800 transition-colors hover:bg-white/[0.07]"
               >
                 Open app
               </Link>
               <Link
                 to="/billing"
-                className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white hover:bg-brand-800"
+                className="rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white transition-all duration-150 ease-ios hover:bg-brand-800 active:scale-[0.97]"
               >
                 My plan
               </Link>
@@ -47,13 +46,13 @@ export function MarketingNav({ dark = false }: { dark?: boolean }) {
             <>
               <Link
                 to="/login"
-                className={cn('rounded-lg px-3 py-2 text-sm font-medium hover:underline', dark ? 'text-ink-300 hover:text-white' : 'text-ink-700')}
+                className="rounded-full px-3 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-white/[0.07] hover:text-ink-900"
               >
                 Log in
               </Link>
               <Link
                 to="/signup"
-                className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white hover:bg-brand-800"
+                className="rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white transition-all duration-150 ease-ios hover:bg-brand-800 active:scale-[0.97]"
               >
                 Start free
               </Link>
@@ -67,7 +66,7 @@ export function MarketingNav({ dark = false }: { dark?: boolean }) {
 
 export function MarketingFooter() {
   return (
-    <footer className="no-print border-t border-ink-200 bg-ink-50">
+    <footer className="no-print border-t border-white/[0.07] bg-surface">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-sm">
           <MarketingLogo />
@@ -93,7 +92,7 @@ export function MarketingFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-ink-200 py-5 text-center text-xs text-ink-400">
+      <div className="border-t border-white/[0.07] px-4 py-5 text-center text-xs leading-relaxed text-ink-400">
         FreelanceTax provides organizational tools and estimates for informational purposes only and is
         not affiliated with the IRS. Not tax advice.
       </div>

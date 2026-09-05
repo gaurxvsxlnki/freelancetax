@@ -16,20 +16,23 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
+  // Filled accent — the single strongest element on any screen.
   primary:
-    'bg-brand-700 text-white hover:bg-brand-800 active:bg-brand-900 shadow-sm disabled:hover:bg-brand-700',
+    'bg-brand-700 text-white shadow-sm hover:bg-brand-800 active:bg-brand-600 disabled:hover:bg-brand-700',
+  // Translucent dark with a hairline border (macOS secondary button).
   secondary:
-    'bg-white text-ink-900 border border-ink-200 hover:bg-ink-50 active:bg-ink-100 shadow-sm disabled:hover:bg-white',
-  ghost: 'text-ink-700 hover:bg-ink-100 active:bg-ink-200 disabled:hover:bg-transparent',
+    'bg-white/[0.06] text-ink-900 ring-1 ring-inset ring-white/10 backdrop-blur-sm hover:bg-white/[0.10] active:bg-white/[0.14] disabled:hover:bg-white/[0.06]',
+  ghost: 'text-ink-700 hover:bg-white/[0.06] hover:text-ink-900 active:bg-white/[0.10] disabled:hover:bg-transparent',
   danger:
-    'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm disabled:hover:bg-red-600',
-  subtle: 'bg-brand-50 text-brand-800 hover:bg-brand-100 active:bg-brand-200',
+    'bg-red-600 text-white shadow-sm hover:bg-red-500 active:bg-red-600 disabled:hover:bg-red-600',
+  subtle: 'bg-brand-700/15 text-brand-900 hover:bg-brand-700/25 active:bg-brand-700/30',
 };
 
+// Pill geometry: fully rounded at every size, generous touch targets.
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3 text-sm gap-1.5',
-  md: 'h-10 px-4 text-sm gap-2',
-  lg: 'h-11 px-5 text-base gap-2',
+  sm: 'h-8 px-3.5 text-[13px] gap-1.5',
+  md: 'h-10 px-4.5 text-sm gap-2',
+  lg: 'h-12 px-6 text-[15px] gap-2',
 };
 
 export function Button({
@@ -46,9 +49,10 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center rounded-lg font-medium transition-colors',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
-        'disabled:cursor-not-allowed disabled:opacity-60',
+        'inline-flex select-none items-center justify-center rounded-full font-medium',
+        'transition-all duration-150 ease-ios active:scale-[0.97]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700',
+        'disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         fullWidth && 'w-full',
@@ -108,12 +112,12 @@ export function SkeletonBlock({ lines = 3, className }: { lines?: number; classN
 type BadgeTone = 'neutral' | 'green' | 'amber' | 'red' | 'blue' | 'purple';
 
 const BADGE_TONES: Record<BadgeTone, string> = {
-  neutral: 'bg-ink-100 text-ink-700 ring-ink-200',
-  green: 'bg-emerald-50 text-emerald-800 ring-emerald-200',
-  amber: 'bg-amber-50 text-amber-800 ring-amber-200',
-  red: 'bg-red-50 text-red-700 ring-red-200',
-  blue: 'bg-brand-50 text-brand-800 ring-brand-200',
-  purple: 'bg-violet-50 text-violet-800 ring-violet-200',
+  neutral: 'bg-white/[0.06] text-ink-600 ring-white/10',
+  green: 'bg-emerald-600/12 text-emerald-600 ring-emerald-600/25',
+  amber: 'bg-amber-500/12 text-amber-500 ring-amber-500/25',
+  red: 'bg-red-500/12 text-red-500 ring-red-500/25',
+  blue: 'bg-brand-700/15 text-brand-800 ring-brand-700/30',
+  purple: 'bg-violet-800/12 text-violet-800 ring-violet-800/25',
 };
 
 export function Badge({
@@ -128,7 +132,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset',
+        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium leading-5 ring-1 ring-inset',
         BADGE_TONES[tone],
         className
       )}
@@ -149,12 +153,18 @@ interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
 
 export function Card({ title, subtitle, actions, padded = true, className, children, ...rest }: CardProps) {
   return (
-    <section className={cn('rounded-xl border border-ink-200 bg-white shadow-card', className)} {...rest}>
+    <section
+      className={cn(
+        'rounded-2xl border border-white/[0.07] bg-surface shadow-card',
+        className
+      )}
+      {...rest}
+    >
       {(title || actions) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 px-5 py-4">
-          <div>
-            {title && <h2 className="text-base font-semibold text-ink-900">{title}</h2>}
-            {subtitle && <p className="mt-0.5 text-sm text-ink-500">{subtitle}</p>}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-5 py-4">
+          <div className="min-w-0">
+            {title && <h2 className="text-[15px] font-semibold tracking-[-0.01em] text-ink-900">{title}</h2>}
+            {subtitle && <p className="mt-0.5 text-[13px] text-ink-500">{subtitle}</p>}
           </div>
           {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
@@ -170,20 +180,20 @@ type AlertVariant = 'info' | 'success' | 'warning' | 'danger';
 
 const ALERT_STYLES: Record<AlertVariant, { wrap: string; icon: ReactNode }> = {
   info: {
-    wrap: 'bg-brand-50 text-brand-900 ring-brand-200',
-    icon: <IconAlert className="h-5 w-5 shrink-0 text-brand-700" />,
+    wrap: 'bg-brand-700/10 text-ink-900 ring-brand-700/25',
+    icon: <IconAlert className="h-5 w-5 shrink-0 text-brand-800" />,
   },
   success: {
-    wrap: 'bg-emerald-50 text-emerald-900 ring-emerald-200',
-    icon: <IconCheck className="h-5 w-5 shrink-0 text-emerald-700" />,
+    wrap: 'bg-emerald-600/10 text-ink-900 ring-emerald-600/25',
+    icon: <IconCheck className="h-5 w-5 shrink-0 text-emerald-600" />,
   },
   warning: {
-    wrap: 'bg-amber-50 text-amber-900 ring-amber-200',
-    icon: <IconAlert className="h-5 w-5 shrink-0 text-amber-700" />,
+    wrap: 'bg-amber-500/10 text-ink-900 ring-amber-500/25',
+    icon: <IconAlert className="h-5 w-5 shrink-0 text-amber-500" />,
   },
   danger: {
-    wrap: 'bg-red-50 text-red-900 ring-red-200',
-    icon: <IconAlert className="h-5 w-5 shrink-0 text-red-700" />,
+    wrap: 'bg-red-500/10 text-ink-900 ring-red-500/25',
+    icon: <IconAlert className="h-5 w-5 shrink-0 text-red-500" />,
   },
 };
 
@@ -202,16 +212,23 @@ export function Alert({
 }) {
   const style = ALERT_STYLES[variant];
   return (
-    <div className={cn('flex items-start gap-3 rounded-lg p-4 text-sm ring-1 ring-inset', style.wrap, className)} role="alert">
+    <div
+      className={cn(
+        'flex items-start gap-3 rounded-2xl p-4 text-sm ring-1 ring-inset',
+        style.wrap,
+        className
+      )}
+      role="alert"
+    >
       {style.icon}
       <div className="min-w-0 flex-1">
         {title && <div className="font-semibold">{title}</div>}
-        {children && <div className="mt-0.5 opacity-90">{children}</div>}
+        {children && <div className="mt-0.5 text-ink-600">{children}</div>}
       </div>
       {onClose && (
         <button
           onClick={onClose}
-          className="shrink-0 rounded p-1 opacity-60 transition-opacity hover:opacity-100"
+          className="shrink-0 rounded-full p-1 text-ink-500 transition-colors hover:bg-white/10 hover:text-ink-900"
           aria-label="Dismiss"
         >
           <IconX className="h-4 w-4" />
@@ -239,13 +256,67 @@ export function EmptyState({
   return (
     <div className={cn('flex flex-col items-center justify-center px-6 py-14 text-center', className)}>
       {icon && (
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-ink-100 text-ink-400 [&>svg]:h-7 [&>svg]:w-7">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.05] text-ink-400 ring-1 ring-inset ring-white/[0.07] [&>svg]:h-7 [&>svg]:w-7">
           {icon}
         </div>
       )}
-      <h3 className="text-base font-semibold text-ink-900">{title}</h3>
-      {description && <p className="mt-1.5 max-w-sm text-sm text-ink-500">{description}</p>}
+      <h3 className="text-[15px] font-semibold text-ink-900">{title}</h3>
+      {description && <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-ink-500">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
+    </div>
+  );
+}
+
+/* ------------------------------ SegmentedControl ----------------------------- */
+
+/**
+ * iOS-style segmented control. Shared by the pricing interval switch, the
+ * imports status filter, and the deductions filter so they stay consistent.
+ */
+export function SegmentedControl<T extends string>({
+  options,
+  value,
+  onChange,
+  size = 'md',
+  className,
+  ariaLabel,
+}: {
+  options: readonly { value: T; label: ReactNode }[];
+  value: T;
+  onChange: (next: T) => void;
+  size?: 'sm' | 'md';
+  className?: string;
+  ariaLabel?: string;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label={ariaLabel}
+      className={cn(
+        'inline-flex items-center gap-0.5 rounded-full bg-white/[0.06] p-0.5 ring-1 ring-inset ring-white/[0.07]',
+        className
+      )}
+    >
+      {options.map((o) => {
+        const active = o.value === value;
+        return (
+          <button
+            key={o.value}
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(o.value)}
+            className={cn(
+              'rounded-full font-medium transition-all duration-150 ease-ios active:scale-[0.97]',
+              size === 'sm' ? 'px-3 py-1 text-[12px]' : 'px-4 py-1.5 text-[13px]',
+              active
+                ? 'bg-white/[0.13] text-ink-900 shadow-sm'
+                : 'text-ink-500 hover:text-ink-700'
+            )}
+          >
+            {o.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -21,11 +21,11 @@ function AuthLayout({
 }) {
   const backend = getBackend();
   return (
-    <div className="flex min-h-screen bg-ink-100">
+    <div className="flex min-h-screen bg-black">
       {/* Brand panel */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-ink-900 p-10 text-white lg:flex">
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-surface-2 p-10 text-ink-900 lg:flex">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white shadow-[0_4px_14px_-4px_rgba(112,118,255,0.7)]">
             <svg viewBox="0 0 32 32" className="h-5 w-5" fill="none" aria-hidden="true">
               <path d="M16 6v20M10 12h8a4 4 0 0 1 0 8h-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -39,17 +39,17 @@ function AuthLayout({
           <h1 className="text-3xl font-semibold leading-tight tracking-tight">
             Know what you owe, before tax season surprises you.
           </h1>
-          <ul className="space-y-3 text-sm text-ink-300">
+          <ul className="space-y-3 text-sm text-ink-500">
             <li className="flex items-start gap-3">
-              <IconTrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-brand-400" />
+              <IconTrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" />
               Track income and expenses in minutes, not spreadsheets.
             </li>
             <li className="flex items-start gap-3">
-              <IconCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-400" />
+              <IconCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" />
               Snap a receipt and review the details before they become expenses.
             </li>
             <li className="flex items-start gap-3">
-              <IconShield className="mt-0.5 h-5 w-5 shrink-0 text-brand-400" />
+              <IconShield className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" />
               Get estimated quarterly set-aside guidance from your own data.
             </li>
           </ul>

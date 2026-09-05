@@ -190,7 +190,7 @@ export function TaxEstimatePage() {
 
 function EstimateTile({ label, value, sub, highlight = false }: { label: string; value: string; sub: string; highlight?: boolean }) {
   return (
-    <div className={highlight ? 'bg-brand-700 p-5 text-white' : 'bg-white p-5'}>
+    <div className={highlight ? 'bg-brand-700 p-5 text-white' : 'bg-surface p-5'}>
       <p className={highlight ? 'text-sm text-brand-200' : 'text-sm text-ink-500'}>{label}</p>
       <p className={`tabular mt-1.5 text-2xl font-semibold tracking-tight ${highlight ? 'text-white' : 'text-ink-900'}`}>
         {value}

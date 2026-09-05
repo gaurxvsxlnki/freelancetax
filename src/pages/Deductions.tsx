@@ -110,7 +110,7 @@ export function DeductionsPage() {
                   'rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors',
                   filter === f.value
                     ? 'bg-brand-700 text-white'
-                    : 'bg-white text-ink-600 ring-1 ring-inset ring-ink-200 hover:bg-ink-50'
+                    : 'bg-surface text-ink-600 ring-1 ring-inset ring-ink-200 hover:bg-white/[0.05]'
                 )}
               >
                 {f.label}
@@ -155,7 +155,7 @@ export function DeductionsPage() {
 
 function SummaryTile({ label, value, sub, accent = false }: { label: string; value: string; sub: string; accent?: boolean }) {
   return (
-    <div className={cn('rounded-xl border p-5 shadow-card', accent ? 'border-brand-200 bg-brand-50' : 'border-ink-200 bg-white')}>
+    <div className={cn('rounded-xl border p-5 shadow-card', accent ? 'border-brand-700/30 bg-brand-700/10' : 'border-white/[0.07] bg-surface')}>
       <p className="text-sm font-medium text-ink-500">{label}</p>
       <p className={cn('tabular mt-1.5 text-2xl font-semibold tracking-tight', accent ? 'text-brand-800' : 'text-ink-900')}>{value}</p>
       <p className="mt-1 text-xs text-ink-500">{sub}</p>
@@ -169,7 +169,7 @@ function InsightCard({ expense }: { expense: ExpenseEntry }) {
   const partialUse = expense.business_use_percentage < 100 && expense.business_use_percentage > 0;
 
   return (
-    <li className="rounded-xl border border-ink-200 bg-white p-5 shadow-card">
+    <li className="rounded-xl border border-ink-200 bg-surface p-5 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">

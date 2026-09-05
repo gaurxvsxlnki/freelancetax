@@ -5,34 +5,83 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    color-scheme: dark;
+    /* Prevent horizontal page overflow app-wide. */
+    overflow-x: hidden;
   }
+
   body {
-    @apply bg-ink-100 text-ink-900 antialiased;
+    @apply bg-black text-ink-900 antialiased;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
+
+  /* Native-feeling focus ring: visible, but not a browser default outline. */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brand-600;
+    outline: 2px solid theme('colors.brand.700');
+    outline-offset: 2px;
+    border-radius: 6px;
   }
+
   ::selection {
-    @apply bg-brand-200 text-brand-900;
+    @apply bg-brand-700/35 text-ink-900;
+  }
+
+  /* Dark form controls — removes the light browser chrome entirely. */
+  input,
+  select,
+  textarea,
+  button {
+    font-family: inherit;
+  }
+
+  select option {
+    background-color: #151518;
+    color: #f5f5f7;
+  }
+
+  /* Date/time pickers render a black glyph on dark by default. */
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='month']::-webkit-calendar-picker-indicator {
+    filter: invert(0.75);
+    cursor: pointer;
+    opacity: 0.7;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator:hover,
+  input[type='month']::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  /* Checkboxes: tint to the accent instead of the OS blue. */
+  input[type='checkbox'] {
+    accent-color: theme('colors.brand.700');
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+  }
+
+  /* Kill the iOS tap highlight; we render our own pressed states. */
+  a,
+  button,
+  [role='button'] {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
 @layer components {
-  /* Skeleton shimmer */
+  /* Skeleton shimmer, tuned for dark surfaces. */
   .skeleton {
-    @apply relative overflow-hidden rounded-md bg-ink-200;
+    @apply relative overflow-hidden rounded-lg bg-ink-100;
   }
   .skeleton::after {
     content: '';
     @apply absolute inset-0;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.7),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
     transform: translateX(-100%);
-    animation: skeleton-shimmer 1.4s infinite;
+    animation: skeleton-shimmer 1.6s infinite;
   }
   @keyframes skeleton-shimmer {
     100% {
@@ -43,23 +92,53 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Frosted surface used by the sidebar, sticky bars, modals and tab bar. */
+  .glass {
+    background-color: rgb(12 12 14 / 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  /* Subtle press feedback shared by interactive elements. */
+  .pressable {
+    @apply transition-transform duration-150 ease-ios active:scale-[0.97];
+  }
+
+  /* iOS safe-area helpers (notch / home indicator). */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .h-safe-bottom {
+    height: env(safe-area-inset-bottom, 0px);
+  }
 }
 
-/* Nicer scrollbars */
+/* Thin, unobtrusive dark scrollbars. */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #2c2c32;
   border-radius: 8px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #3d3d45;
   border: 2px solid transparent;
   background-clip: content-box;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2c2c32 transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -67,15 +146,24 @@
     animation: none;
     transform: none;
   }
-  * {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
 }
 
-/* Print: hide the app chrome, show only the printable report */
+/* Print: force a light, ink-friendly document for reports. */
 @media print {
+  html {
+    color-scheme: light;
+  }
   body {
     background: white !important;
+    color: #0f172a !important;
   }
   .no-print {
     display: none !important;
@@ -85,5 +173,12 @@
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
+    background: white !important;
+    color: #0f172a !important;
+  }
+  .print-area * {
+    color: #0f172a !important;
+    background: transparent !important;
+    border-color: #cbd5e1 !important;
   }
 }

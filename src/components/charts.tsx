@@ -1,6 +1,15 @@
 import { cn } from '../lib/cn';
 import { formatNumber } from '../lib/format';
 
+/* Dark-theme chart tokens. Grid lines are barely-there; colour is reserved for
+ * the data itself so charts read calmly against the black canvas. */
+const GRID = 'rgba(255,255,255,0.055)';
+const ZERO_LINE = 'rgba(255,255,255,0.16)';
+const AXIS_TEXT = '#75757E';
+const ACCENT = '#7076FF';
+const POSITIVE = '#34D399';
+const NEGATIVE = '#E5484D';
+
 export interface ChartDatum {
   label: string;
   value: number;
@@ -35,7 +44,7 @@ export function BarChart({
               x2={Math.max(chartWidth, 320)}
               y1={height * (1 - f) + 4}
               y2={height * (1 - f) + 4}
-              stroke="#e2e8f0"
+              stroke={GRID}
               strokeWidth="1"
             />
           ))}
@@ -46,13 +55,13 @@ export function BarChart({
             return (
               <g key={d.label}>
                 <title>{`${d.label}: ${valueFormatter(d.value)}`}</title>
-                <rect x={x} y={y} width={barWidth} height={barH} rx="4" fill="#4a51e4" opacity={d.value === 0 ? 0.15 : 0.9} />
+                <rect x={x} y={y} width={barWidth} height={barH} rx="6" fill={ACCENT} opacity={d.value === 0 ? 0.12 : 0.92} />
                 <text
                   x={x + barWidth / 2}
                   y={height + 16}
                   textAnchor="middle"
                   fontSize="10"
-                  fill="#64748b"
+                  fill={AXIS_TEXT}
                 >
                   {d.label}
                 </text>
@@ -93,9 +102,9 @@ export function SignedBarChart({
       <div style={{ minWidth: Math.max(chartWidth, 320) }}>
         <svg width="100%" height={height + labelHeight} viewBox={`0 0 ${Math.max(chartWidth, 320)} ${height + labelHeight}`} role="img" aria-label="Signed bar chart">
           {[0.25, 0.5, 0.75, 1].map((f) => (
-            <line key={f} x1="0" x2={Math.max(chartWidth, 320)} y1={height * (1 - f) + 4} y2={height * (1 - f) + 4} stroke="#e2e8f0" strokeWidth="1" />
+            <line key={f} x1="0" x2={Math.max(chartWidth, 320)} y1={height * (1 - f) + 4} y2={height * (1 - f) + 4} stroke={GRID} strokeWidth="1" />
           ))}
-          {hasNeg && <line x1="0" x2={Math.max(chartWidth, 320)} y1={zeroY + 4} y2={zeroY + 4} stroke="#cbd5e1" strokeWidth="1.5" />}
+          {hasNeg && <line x1="0" x2={Math.max(chartWidth, 320)} y1={zeroY + 4} y2={zeroY + 4} stroke={ZERO_LINE} strokeWidth="1" />}
           {data.map((d, i) => {
             const barH = Math.max(2, Math.abs(d.value) * scale);
             const x = i * (barWidth + barGap) + barGap / 2;
@@ -104,8 +113,8 @@ export function SignedBarChart({
             return (
               <g key={d.label}>
                 <title>{`${d.label}: ${valueFormatter(d.value)}`}</title>
-                <rect x={x} y={y} width={barWidth} height={barH} rx="4" fill={positive ? '#0d9488' : '#dc2626'} opacity={d.value === 0 ? 0.15 : 0.9} />
-                <text x={x + barWidth / 2} y={height + 16} textAnchor="middle" fontSize="10" fill="#64748b">
+                <rect x={x} y={y} width={barWidth} height={barH} rx="6" fill={positive ? POSITIVE : NEGATIVE} opacity={d.value === 0 ? 0.12 : 0.92} />
+                <text x={x + barWidth / 2} y={height + 16} textAnchor="middle" fontSize="10" fill={AXIS_TEXT}>
                   {d.label}
                 </text>
               </g>
@@ -117,18 +126,19 @@ export function SignedBarChart({
   );
 }
 
+/* Muted-but-legible categorical palette for dark surfaces. */
 const CATEGORY_COLORS = [
-  '#4a51e4',
-  '#0d9488',
-  '#d97706',
-  '#dc2626',
-  '#7c3aed',
-  '#0284c7',
-  '#65a30d',
-  '#db2777',
-  '#64748b',
-  '#b45309',
-  '#334155',
+  '#7076FF',
+  '#34D399',
+  '#F5A524',
+  '#E5484D',
+  '#A78BFA',
+  '#38BDF8',
+  '#A3E635',
+  '#F472B6',
+  '#94949E',
+  '#FB923C',
+  '#5EEAD4',
 ];
 
 export function categoryColor(index: number): string {
@@ -157,9 +167,9 @@ export function CategoryBreakdown({
             <span className="truncate font-medium text-ink-700">{item.label}</span>
             <span className="tabular shrink-0 text-ink-500">{valueFormatter(item.value)}</span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-ink-100">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.07]">
             <div
-              className="h-full rounded-full transition-all"
+              className="h-full rounded-full transition-all duration-500 ease-ios"
               style={{
                 width: `${Math.max(2, (item.value / max) * 100)}%`,
                 backgroundColor: categoryColor(i),

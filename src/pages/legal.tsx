@@ -4,7 +4,7 @@ import { MarketingFooter, MarketingNav } from '../components/marketing';
 
 function LegalLayout({ title, updated, children }: { title: string; updated: string; children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black">
       <MarketingNav />
       <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
         <h1 className="text-3xl font-semibold tracking-tight text-ink-900">{title}</h1>

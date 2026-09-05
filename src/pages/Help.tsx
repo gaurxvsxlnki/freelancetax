@@ -94,7 +94,7 @@ export function HelpPage() {
         <ol className="grid gap-4 sm:grid-cols-2">
           {STEPS.map((s, i) => (
             <li key={s.title} className="flex gap-4 rounded-lg border border-ink-100 bg-ink-50/50 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-brand-700 [&>svg]:h-5 [&>svg]:w-5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-700/15 text-brand-800 [&>svg]:h-5 [&>svg]:w-5">
                 <s.icon />
               </div>
               <div className="min-w-0">

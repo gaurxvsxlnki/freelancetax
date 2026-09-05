@@ -63,7 +63,7 @@ export function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black">
       <Seo
         title="FreelanceTax Pricing — Free & Pro Plans"
         description="Start free with 20 expenses and 5 receipt scans a month, or upgrade to Pro for unlimited tracking, AI deduction insights, reports, and CSV export."
@@ -100,13 +100,13 @@ export function PricingPage() {
         <div className="mt-10 flex items-center justify-center gap-3">
           <button
             onClick={() => setInterval('month')}
-            className={cn('rounded-lg px-4 py-2 text-sm font-medium', interval === 'month' ? 'bg-brand-700 text-white' : 'bg-ink-100 text-ink-600 hover:bg-ink-200')}
+            className={cn('rounded-lg px-4 py-2 text-sm font-medium', interval === 'month' ? 'bg-brand-700 text-white' : 'bg-ink-100 text-ink-600 hover:bg-white/[0.12]')}
           >
             Monthly
           </button>
           <button
             onClick={() => setInterval('year')}
-            className={cn('rounded-lg px-4 py-2 text-sm font-medium', interval === 'year' ? 'bg-brand-700 text-white' : 'bg-ink-100 text-ink-600 hover:bg-ink-200')}
+            className={cn('rounded-lg px-4 py-2 text-sm font-medium', interval === 'year' ? 'bg-brand-700 text-white' : 'bg-ink-100 text-ink-600 hover:bg-white/[0.12]')}
           >
             Annual
             <Badge tone="green" className="ml-2">Save ~{PRO_YEARLY_SAVING_PCT}%</Badge>
@@ -115,7 +115,7 @@ export function PricingPage() {
 
         {/* Plan cards */}
         <div className="mx-auto mt-8 grid max-w-3xl gap-6 md:grid-cols-2">
-          <div className="flex flex-col rounded-2xl border border-ink-200 bg-white p-8 shadow-card">
+          <div className="flex flex-col rounded-2xl border border-ink-200 bg-surface p-8 shadow-card">
             <p className="text-lg font-semibold text-ink-900">Free</p>
             <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">$0</p>
             <p className="mt-1 text-sm text-ink-500">forever</p>
@@ -141,7 +141,7 @@ export function PricingPage() {
             )}
           </div>
 
-          <div className="relative flex flex-col rounded-2xl border-2 border-brand-700 bg-white p-8 shadow-pop">
+          <div className="relative flex flex-col rounded-2xl border-2 border-brand-700 bg-surface p-8 shadow-pop">
             <Badge tone="blue" className="absolute -top-3 left-8">RECOMMENDED</Badge>
             <div className="flex items-baseline justify-between">
               <p className="text-lg font-semibold text-ink-900">Pro</p>
@@ -196,12 +196,12 @@ export function PricingPage() {
         <div className="mt-16">
           <h2 className="text-center text-2xl font-semibold tracking-tight text-ink-900">Compare plans</h2>
           <div className="mt-6 overflow-x-auto rounded-2xl border border-ink-200">
-            <table className="w-full min-w-[520px] bg-white text-left text-sm">
+            <table className="w-full min-w-[520px] bg-surface text-left text-sm">
               <thead>
                 <tr className="border-b border-ink-200 bg-ink-50/70">
                   <th className="px-6 py-4 font-medium text-ink-500">Feature</th>
                   <th className="w-36 px-6 py-4 font-semibold text-ink-900">Free</th>
-                  <th className="w-36 bg-brand-50 px-6 py-4 font-semibold text-brand-800">Pro</th>
+                  <th className="w-36 bg-brand-700/12 px-6 py-4 font-semibold text-brand-900">Pro</th>
                 </tr>
               </thead>
               <tbody>
@@ -209,7 +209,7 @@ export function PricingPage() {
                   <tr key={r.feature} className="border-b border-ink-100 last:border-0">
                     <td className="px-6 py-3.5 text-ink-700">{r.feature}</td>
                     <td className="px-6 py-3.5"><CellValue value={r.free} muted /></td>
-                    <td className="bg-brand-50/60 px-6 py-3.5"><CellValue value={r.pro} /></td>
+                    <td className="bg-brand-700/[0.07] px-6 py-3.5"><CellValue value={r.pro} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -230,7 +230,7 @@ export function PricingPage() {
 
 function CellValue({ value, muted = false }: { value: string | boolean; muted?: boolean }) {
   if (value === true) return <IconCheck className="h-5 w-5 text-emerald-600" aria-label="Included" />;
-  if (value === false) return <IconMinus className="h-5 w-5 text-ink-300" aria-label="Not included" />;
+  if (value === false) return <IconMinus className="h-5 w-5 text-ink-400" aria-label="Not included" />;
   return <span className={cn('font-medium', muted ? 'text-ink-600' : 'text-ink-900')}>{value}</span>;
 }
 
@@ -240,7 +240,7 @@ function PlanLine({ ok, children }: { ok: boolean; children: React.ReactNode }) 
       {ok ? (
         <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
       ) : (
-        <IconMinus className="mt-0.5 h-4 w-4 shrink-0 text-ink-300" />
+        <IconMinus className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
       )}
       <span>{children}</span>
     </li>

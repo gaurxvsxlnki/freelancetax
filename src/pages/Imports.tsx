@@ -400,7 +400,7 @@ export function ImportsPage() {
                   onClick={() => { setStatusFilter(s); setSelected(new Set()); }}
                   className={cn(
                     'px-3 py-1.5 text-xs font-medium transition-colors',
-                    statusFilter === s ? 'bg-brand-700 text-white' : 'bg-white text-ink-600 hover:bg-ink-50'
+                    statusFilter === s ? 'bg-brand-700 text-white' : 'bg-surface text-ink-600 hover:bg-white/[0.05]'
                   )}
                 >
                   {s === 'pending' ? 'Needs review' : s === 'reviewed' ? 'Added' : 'Ignored'}
@@ -410,7 +410,7 @@ export function ImportsPage() {
                 onClick={() => { setStatusFilter('all'); setSelected(new Set()); }}
                 className={cn(
                   'px-3 py-1.5 text-xs font-medium transition-colors',
-                  statusFilter === 'all' ? 'bg-brand-700 text-white' : 'bg-white text-ink-600 hover:bg-ink-50'
+                  statusFilter === 'all' ? 'bg-brand-700 text-white' : 'bg-surface text-ink-600 hover:bg-white/[0.05]'
                 )}
               >
                 All
@@ -501,7 +501,7 @@ export function ImportsPage() {
                     const classification = t.classification ?? sug.classification;
                     const account = t.account_id ? byId.get(t.account_id) : undefined;
                     return (
-                      <tr key={t.id} className="border-b border-ink-50 last:border-0 hover:bg-ink-50/50">
+                      <tr key={t.id} className="border-b border-ink-50 last:border-0 hover:bg-white/[0.05]/50">
                         <td className="px-4 py-3">
                           {statusFilter === 'pending' && (
                             <input
@@ -560,7 +560,7 @@ export function ImportsPage() {
                               </Button>
                               <button
                                 onClick={() => void review(t, 'ignore')}
-                                className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                                className="rounded-md p-1.5 text-ink-400 hover:bg-white/[0.08] hover:text-ink-700"
                                 aria-label={`Ignore ${t.merchant}`}
                                 title="Ignore"
                               >

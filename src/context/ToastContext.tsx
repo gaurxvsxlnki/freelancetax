@@ -19,19 +19,10 @@ interface ToastApi {
 
 const ToastContext = createContext<ToastApi | null>(null);
 
-const STYLES: Record<ToastVariant, { wrap: string; icon: ReactNode }> = {
-  success: {
-    wrap: 'border-emerald-200 bg-white',
-    icon: <IconCheck className="h-5 w-5 text-emerald-600" />,
-  },
-  error: {
-    wrap: 'border-red-200 bg-white',
-    icon: <IconAlert className="h-5 w-5 text-red-600" />,
-  },
-  info: {
-    wrap: 'border-brand-200 bg-white',
-    icon: <IconAlert className="h-5 w-5 text-brand-600" />,
-  },
+const STYLES: Record<ToastVariant, { icon: ReactNode }> = {
+  success: { icon: <IconCheck className="h-[18px] w-[18px] text-emerald-600" /> },
+  error: { icon: <IconAlert className="h-[18px] w-[18px] text-red-500" /> },
+  info: { icon: <IconAlert className="h-[18px] w-[18px] text-brand-800" /> },
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -61,29 +52,35 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={api}>
       {children}
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-2 p-4 sm:items-end sm:pr-6 sm:pb-6" aria-live="polite">
+      <div
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-2 p-3 pb-[calc(env(safe-area-inset-bottom,0px)+5.25rem)] sm:items-end sm:p-6 sm:pb-6"
+        aria-live="polite"
+      >
         {toasts.map((t) => {
           const style = STYLES[t.variant];
           return (
             <div
               key={t.id}
               className={cn(
-                'pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border p-4 shadow-pop',
-                style.wrap
+                'pointer-events-auto flex w-full max-w-sm items-start gap-2.5 rounded-2xl',
+                'border border-white/10 bg-surface-3/90 px-3.5 py-3 shadow-pop backdrop-blur-xl',
+                'animate-toast-in'
               )}
               role={t.variant === 'error' ? 'alert' : 'status'}
             >
-              <div className="shrink-0">{style.icon}</div>
+              <div className="mt-0.5 shrink-0">{style.icon}</div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-ink-900">{t.title}</p>
-                {t.description && <p className="mt-0.5 text-sm text-ink-500">{t.description}</p>}
+                <p className="text-[13px] font-semibold leading-snug text-ink-900">{t.title}</p>
+                {t.description && (
+                  <p className="mt-0.5 text-[12px] leading-snug text-ink-500">{t.description}</p>
+                )}
               </div>
               <button
                 onClick={() => dismiss(t.id)}
-                className="shrink-0 rounded p-1 text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
+                className="-mr-1 shrink-0 rounded-full p-1 text-ink-400 transition-colors hover:bg-white/10 hover:text-ink-900"
                 aria-label="Dismiss notification"
               >
-                <IconX className="h-4 w-4" />
+                <IconX className="h-3.5 w-3.5" />
               </button>
             </div>
           );
