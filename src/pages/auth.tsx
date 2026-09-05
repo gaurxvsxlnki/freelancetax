@@ -397,8 +397,8 @@ export function ResetPasswordPage() {
       {!supabaseConfigured ? (
         <Alert variant="info" title="Demo mode">
           Password reset emails require a Supabase project. Once you add{' '}
-          <code className="rounded bg-ink-100 px-1">VITE_SUPABASE_URL</code> and{' '}
-          <code className="rounded bg-ink-100 px-1">VITE_SUPABASE_ANON_KEY</code>, reset links
+          <code className="rounded-md bg-white/[0.07] px-1.5 py-0.5">VITE_SUPABASE_URL</code> and{' '}
+          <code className="rounded-md bg-white/[0.07] px-1.5 py-0.5">VITE_SUPABASE_ANON_KEY</code>, reset links
           work end-to-end.
         </Alert>
       ) : initializing ? (

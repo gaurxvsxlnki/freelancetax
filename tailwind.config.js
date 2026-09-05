@@ -21,6 +21,12 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      // Extra-small breakpoint for compact phones (iPhone SE is 375px, and
+      // 320px still exists). Lets dense numeric grids stack safely.
+      screens: {
+        xs: '400px',
+      },
+
       colors: {
         // Elevated surfaces. `surface` replaces the old `bg-white` cards.
         surface: {

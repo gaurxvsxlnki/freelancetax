@@ -25,7 +25,7 @@ import { DisclaimerPage, PrivacyPage, TermsPage } from './pages/legal';
 
 function FullPageLoader() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-ink-100">
+    <div className="flex min-h-screen items-center justify-center bg-black">
       <div className="flex flex-col items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-700 text-white shadow-card">
           <svg viewBox="0 0 32 32" className="h-6 w-6" fill="none" aria-hidden="true">
@@ -72,7 +72,7 @@ function PublicOnly({ children }: { children: ReactNode }) {
 
 function NotFoundPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-ink-100 px-4 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-black px-4 text-center">
       <div className="text-5xl font-semibold tracking-tight text-ink-900">404</div>
       <p className="mt-2 max-w-sm text-sm text-ink-500">
         This page doesn't exist or has been moved.

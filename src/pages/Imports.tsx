@@ -12,7 +12,7 @@ import {
 import { money, moneyCents, formatDate, pluralize } from '../lib/format';
 import type { ImportedTransaction, LinkedAccount, TxnClassification } from '../lib/types';
 import { PageHeader } from '../components/layout/AppShell';
-import { Alert, Badge, Button, Card, EmptyState, Skeleton } from '../components/ui/primitives';
+import { Alert, Badge, Button, Card, EmptyState, SegmentedControl, Skeleton } from '../components/ui/primitives';
 import { Select } from '../components/ui/forms';
 import { ConfirmDialog } from '../components/ui/overlays';
 import { UpgradePromptModal } from '../components/billing';
@@ -345,7 +345,7 @@ export function ImportsPage() {
         ) : (
           <ul className="space-y-3">
             {accounts.map((a) => (
-              <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ink-200 bg-ink-50/50 p-4">
+              <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-semibold text-ink-900">
@@ -393,29 +393,18 @@ export function ImportsPage() {
         padded={false}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex overflow-hidden rounded-lg border border-ink-200">
-              {(['pending', 'reviewed', 'ignored'] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => { setStatusFilter(s); setSelected(new Set()); }}
-                  className={cn(
-                    'px-3 py-1.5 text-xs font-medium transition-colors',
-                    statusFilter === s ? 'bg-brand-700 text-white' : 'bg-surface text-ink-600 hover:bg-white/[0.05]'
-                  )}
-                >
-                  {s === 'pending' ? 'Needs review' : s === 'reviewed' ? 'Added' : 'Ignored'}
-                </button>
-              ))}
-              <button
-                onClick={() => { setStatusFilter('all'); setSelected(new Set()); }}
-                className={cn(
-                  'px-3 py-1.5 text-xs font-medium transition-colors',
-                  statusFilter === 'all' ? 'bg-brand-700 text-white' : 'bg-surface text-ink-600 hover:bg-white/[0.05]'
-                )}
-              >
-                All
-              </button>
-            </div>
+            <SegmentedControl
+              size="sm"
+              ariaLabel="Filter transactions by status"
+              value={statusFilter}
+              onChange={(v) => { setStatusFilter(v); setSelected(new Set()); }}
+              options={[
+                { value: 'pending' as const, label: 'Needs review' },
+                { value: 'reviewed' as const, label: 'Added' },
+                { value: 'ignored' as const, label: 'Ignored' },
+                { value: 'all' as const, label: 'All' },
+              ]}
+            />
           </div>
         }
       >
@@ -446,7 +435,7 @@ export function ImportsPage() {
         ) : (
           <>
             {statusFilter === 'pending' && (
-              <div className="flex flex-wrap items-center gap-2 border-b border-ink-100 px-5 py-3">
+              <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] px-5 py-3">
                 <Select
                   options={categoryOptions}
                   placeholder="Category for selection…"
@@ -472,7 +461,7 @@ export function ImportsPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-left text-sm">
                 <thead>
-                  <tr className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
+                  <tr className="border-b border-white/[0.07] text-[12px] font-medium text-ink-400">
                     <th className="w-10 px-4 py-3">
                       {statusFilter === 'pending' && (
                         <input
@@ -501,7 +490,7 @@ export function ImportsPage() {
                     const classification = t.classification ?? sug.classification;
                     const account = t.account_id ? byId.get(t.account_id) : undefined;
                     return (
-                      <tr key={t.id} className="border-b border-ink-50 last:border-0 hover:bg-white/[0.05]/50">
+                      <tr key={t.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.05]">
                         <td className="px-4 py-3">
                           {statusFilter === 'pending' && (
                             <input
@@ -514,7 +503,7 @@ export function ImportsPage() {
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-ink-500">
                           {formatDate(t.txn_date)}
-                          <span className="ml-1.5 rounded bg-ink-100 px-1 py-0.5 text-[10px] font-medium uppercase text-ink-500">Imported</span>
+                          <span className="ml-1.5 rounded-md bg-white/[0.07] px-1.5 py-0.5 py-0.5 text-[10px] font-medium uppercase text-ink-500">Imported</span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="font-medium text-ink-900">{t.merchant || '—'}</div>
@@ -560,7 +549,7 @@ export function ImportsPage() {
                               </Button>
                               <button
                                 onClick={() => void review(t, 'ignore')}
-                                className="rounded-md p-1.5 text-ink-400 hover:bg-white/[0.08] hover:text-ink-700"
+                                className="rounded-full p-1.5 text-ink-400 hover:bg-white/[0.08] hover:text-ink-700"
                                 aria-label={`Ignore ${t.merchant}`}
                                 title="Ignore"
                               >
@@ -583,7 +572,7 @@ export function ImportsPage() {
         )}
       </Card>
 
-      <div className="mt-4 rounded-xl border border-ink-200 bg-ink-50/60 p-4 text-xs leading-relaxed text-ink-500">
+      <div className="mt-4 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4 text-xs leading-relaxed text-ink-500">
         <strong>How imports work:</strong> synced transactions arrive uncategorized and are never added
         to your records until you review them. Adding an item creates a normal expense or income
         entry (labeled Imported). Your categorization choices are remembered for future syncs.

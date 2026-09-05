@@ -107,8 +107,8 @@ export function BillingPage() {
       {!paymentsConfigured && (
         <Alert variant="info" title="Payments aren't connected in this environment" className="mb-6">
           Real subscriptions require a Supabase project with Stripe credentials. Add{' '}
-          <code className="rounded bg-ink-100 px-1">STRIPE_SECRET_KEY</code>,{' '}
-          <code className="rounded bg-ink-100 px-1">STRIPE_WEBHOOK_SECRET</code>, and price ids to the
+          <code className="rounded-md bg-white/[0.07] px-1.5 py-0.5">STRIPE_SECRET_KEY</code>,{' '}
+          <code className="rounded-md bg-white/[0.07] px-1.5 py-0.5">STRIPE_WEBHOOK_SECRET</code>, and price ids to the
           server to activate checkout.
           {backend.isDemo && ' Demo mode data stays in your browser.'}
         </Alert>
@@ -231,7 +231,7 @@ export function BillingPage() {
               <p>
                 You're on the Pro plan, so nothing is capped this month. Nice.
               </p>
-              <div className="space-y-4 rounded-xl bg-ink-50 p-4 ring-1 ring-inset ring-ink-100">
+              <div className="space-y-4 rounded-xl bg-white/[0.04] p-4 ring-1 ring-inset ring-white/[0.07]">
                 <UsageMeter label="Expense transactions" used={expenseEnt.used} limit={null} unlimited />
                 <UsageMeter label="Receipt scans" used={receiptEnt.used} limit={null} unlimited />
               </div>
@@ -252,7 +252,7 @@ export function BillingPage() {
         </Card>
       </div>
 
-      <div className="mt-6 rounded-xl border border-ink-200 bg-ink-50/60 p-4 text-xs leading-relaxed text-ink-500">
+      <div className="mt-6 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4 text-xs leading-relaxed text-ink-500">
         Payments are processed securely by Stripe — FreelanceTax never stores your card details. You
         can update payment methods, download invoices, and cancel from Stripe's billing portal.
       </div>

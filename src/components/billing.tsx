@@ -48,7 +48,7 @@ export function UsageMeter({
           {formatNumber(used)} / {formatNumber(limit)}
         </span>
       </div>
-      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-ink-100">
+      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-white/[0.08]">
         <div
           className={cn('h-full rounded-full transition-all', atLimit ? 'bg-amber-500' : 'bg-brand-600')}
           style={{ width: `${Math.max(2, pct)}%` }}
@@ -110,14 +110,14 @@ export function UpgradePromptModal({
             <div className="mt-1 text-sm leading-relaxed text-ink-600">{description}</div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 rounded-xl border border-ink-200 p-4 text-sm">
+        <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/[0.07] p-4 text-sm">
           <div>
             <p className="font-medium text-ink-900">Pro</p>
             <p className="mt-1 text-ink-500">Unlimited expenses &amp; receipt scans</p>
             <p className="mt-1 text-ink-500">AI deduction insights &amp; reports</p>
             <p className="mt-1 text-ink-500">CSV export</p>
           </div>
-          <div className="border-l border-ink-100 pl-4">
+          <div className="border-l border-white/[0.06] pl-4">
             <p className="font-medium text-ink-900">{PRO_MONTHLY_LABEL}<span className="text-xs text-ink-500">/mo</span></p>
             <p className="mt-1 text-ink-500">or {PRO_YEARLY_LABEL}/year</p>
             <p className="mt-1 text-xs text-emerald-700">Save ~{PRO_YEARLY_SAVING_PCT}% annually</p>

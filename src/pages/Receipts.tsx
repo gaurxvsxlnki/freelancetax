@@ -42,7 +42,7 @@ function ReceiptThumb({ receipt, onClick }: { receipt: Receipt; onClick: () => v
 
   if (isImage && url) {
     return (
-      <button onClick={onClick} className="block h-36 w-full overflow-hidden rounded-t-xl bg-ink-50" aria-label={`View ${receipt.file_name}`}>
+      <button onClick={onClick} className="block h-36 w-full overflow-hidden rounded-t-xl bg-white/[0.04]" aria-label={`View ${receipt.file_name}`}>
         <img src={url} alt={receipt.file_name} className="h-full w-full object-cover" />
       </button>
     );
@@ -349,7 +349,7 @@ export function ReceiptsPage() {
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
-        className={`mb-6 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
+        className={`mb-6 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-10 text-center transition-colors ${
           dragOver ? 'border-brand-700 bg-brand-700/10' : 'border-white/15 bg-surface hover:border-brand-700/60 hover:bg-white/[0.05]'
         }`}
         onClick={requestUpload}
@@ -390,7 +390,7 @@ export function ReceiptsPage() {
           />
         ) : (
           <>
-            <div className="flex flex-wrap items-center gap-2 border-b border-ink-100 px-5 py-3">
+            <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] px-5 py-3">
               <div className="relative min-w-0 flex-1 sm:max-w-xs">
                 <IconSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
                 <input
@@ -416,8 +416,8 @@ export function ReceiptsPage() {
                 <span className="tabular font-medium text-ink-700">{moneyCents(yearStats.total)}</span> tracked
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2 border-b border-ink-100 bg-ink-50/40 px-5 py-2.5">
-              <span className="text-xs font-medium uppercase tracking-wide text-ink-400">Filters</span>
+            <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] bg-white/[0.03] px-5 py-2.5">
+              <span className="text-[12px] font-medium text-ink-400">Filters</span>
               <Select
                 aria-label="Filter by category"
                 value={catFilter}
@@ -454,7 +454,7 @@ export function ReceiptsPage() {
                 {filtered.map((r) => {
               const meta = STATUS_META[r.processing_status];
               return (
-                <div key={r.id} className="flex flex-col overflow-hidden rounded-xl border border-ink-200 bg-surface shadow-card">
+                <div key={r.id} className="flex flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-surface shadow-card">
                   <ReceiptThumb receipt={r} onClick={() => setViewing(r)} />
                   <div className="flex flex-1 flex-col gap-2 p-4">
                     <div className="flex items-start justify-between gap-2">
@@ -483,7 +483,7 @@ export function ReceiptsPage() {
                         </Button>
                         <button
                           onClick={() => setDeleting(r)}
-                          className="rounded-md p-1.5 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
+                          className="rounded-full p-1.5 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
                           aria-label={`Delete ${r.file_name}`}
                           title="Delete"
                         >
@@ -681,16 +681,16 @@ function ViewReceiptModal({
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           {isImage && url ? (
-            <img src={url} alt={receipt?.file_name} className="max-h-80 w-full rounded-lg border border-ink-200 object-contain" />
+            <img src={url} alt={receipt?.file_name} className="max-h-80 w-full rounded-lg border border-white/[0.07] object-contain" />
           ) : url ? (
-            <div className="flex h-64 items-center justify-center rounded-lg border border-ink-200 bg-ink-50">
+            <div className="flex h-64 items-center justify-center rounded-lg border border-white/[0.07] bg-white/[0.04]">
               <a href={url} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-2 text-sm text-brand-700 hover:underline">
                 <IconFile className="h-10 w-10 text-ink-400" />
                 Open PDF in a new tab
               </a>
             </div>
           ) : (
-            <div className="flex h-64 items-center justify-center rounded-lg border border-ink-200 bg-ink-50 text-sm text-ink-400">
+            <div className="flex h-64 items-center justify-center rounded-lg border border-white/[0.07] bg-white/[0.04] text-sm text-ink-400">
               File preview unavailable
             </div>
           )}
@@ -726,7 +726,7 @@ function ViewReceiptModal({
           {receipt?.extracted_text && (
             <div>
               <p className="mb-1 font-medium text-ink-700">Extracted text</p>
-              <p className="max-h-36 overflow-y-auto whitespace-pre-wrap rounded-lg bg-ink-50 p-3 text-xs leading-relaxed text-ink-600">
+              <p className="max-h-36 overflow-y-auto whitespace-pre-wrap rounded-lg bg-white/[0.04] p-3 text-xs leading-relaxed text-ink-600">
                 {receipt.extracted_text}
               </p>
             </div>
@@ -735,7 +735,7 @@ function ViewReceiptModal({
       </div>
 
       {receipt && (
-        <div className="mt-2 rounded-xl border border-ink-200 p-4">
+        <div className="mt-2 rounded-xl border border-white/[0.07] p-4">
           <div className="mb-2 flex items-center gap-2">
             <IconLink className="h-4 w-4 text-ink-400" />
             <p className="text-sm font-medium text-ink-900">Receipt organization</p>

@@ -230,7 +230,7 @@ export function ReportsPage() {
       ) : !hasData ? (
         <Card>
           <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-ink-100 text-ink-400">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.05] text-ink-400 ring-1 ring-inset ring-white/[0.07]">
               <IconDownload className="h-7 w-7" />
             </div>
             <h3 className="text-base font-semibold text-ink-900">Nothing to report yet</h3>
@@ -242,7 +242,7 @@ export function ReportsPage() {
       ) : (
         <div className="print-area space-y-6">
           {/* Report header (prints nicely) */}
-          <div className="rounded-xl border border-ink-200 bg-surface p-6 shadow-card print:border-0 print:p-0">
+          <div className="rounded-xl border border-white/[0.07] bg-surface p-6 shadow-card print:border-0 print:p-0">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold tracking-tight text-ink-900">
@@ -303,7 +303,7 @@ export function ReportsPage() {
             ) : (
               <div className="overflow-x-auto"><table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
+                  <tr className="border-b border-white/[0.07] text-[12px] font-medium text-ink-400">
                     <th className="px-5 py-3 font-medium">Date</th>
                     <th className="px-5 py-3 font-medium">Source</th>
                     <th className="px-5 py-3 font-medium">Category</th>
@@ -312,7 +312,7 @@ export function ReportsPage() {
                 </thead>
                 <tbody>
                   {report.income.map((e) => (
-                    <tr key={e.id} className="border-b border-ink-50 last:border-0">
+                    <tr key={e.id} className="border-b border-white/[0.05] last:border-0">
                       <td className="whitespace-nowrap px-5 py-2.5 text-ink-500">{formatDate(e.income_date)}</td>
                       <td className="px-5 py-2.5 font-medium text-ink-900">{e.source}</td>
                       <td className="px-5 py-2.5"><Badge>{e.category}</Badge></td>
@@ -334,7 +334,7 @@ export function ReportsPage() {
             ) : (
               <div className="overflow-x-auto"><table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
+                  <tr className="border-b border-white/[0.07] text-[12px] font-medium text-ink-400">
                     <th className="px-5 py-3 font-medium">Date</th>
                     <th className="px-5 py-3 font-medium">Merchant</th>
                     <th className="px-5 py-3 font-medium">Category</th>
@@ -345,7 +345,7 @@ export function ReportsPage() {
                 </thead>
                 <tbody>
                   {report.expenses.map((e) => (
-                    <tr key={e.id} className="border-b border-ink-50 last:border-0">
+                    <tr key={e.id} className="border-b border-white/[0.05] last:border-0">
                       <td className="whitespace-nowrap px-5 py-2.5 text-ink-500">{formatDate(e.expense_date)}</td>
                       <td className="px-5 py-2.5 font-medium text-ink-900">{e.merchant}</td>
                       <td className="px-5 py-2.5"><Badge>{e.category}</Badge></td>
@@ -367,7 +367,7 @@ export function ReportsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
+                      <tr className="border-b border-white/[0.07] text-[12px] font-medium text-ink-400">
                         <th className="px-5 py-3 font-medium">Month</th>
                         <th className="px-5 py-3 text-right font-medium">Income</th>
                         <th className="px-5 py-3 text-right font-medium">Business expenses</th>
@@ -376,7 +376,7 @@ export function ReportsPage() {
                     </thead>
                     <tbody>
                       {report.monthly.map((m) => (
-                        <tr key={m.label} className="border-b border-ink-50 last:border-0">
+                        <tr key={m.label} className="border-b border-white/[0.05] last:border-0">
                           <td className="px-5 py-2.5 font-medium text-ink-900">{m.label}</td>
                           <td className="tabular whitespace-nowrap px-5 py-2.5 text-right text-emerald-700">{money(m.income)}</td>
                           <td className="tabular whitespace-nowrap px-5 py-2.5 text-right text-ink-700">{money(m.expenses)}</td>
@@ -396,7 +396,7 @@ export function ReportsPage() {
                     </p>
                   ) : (
                     <>
-                      <ul className="divide-y divide-ink-100">
+                      <ul className="divide-y divide-white/[0.06]">
                         {report.reserveHistory.map((p) => (
                           <li key={p.id} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
                             <span className="min-w-0 truncate text-ink-700">
@@ -409,7 +409,7 @@ export function ReportsPage() {
                           </li>
                         ))}
                       </ul>
-                      <div className="border-t border-ink-100 px-5 py-3 text-sm">
+                      <div className="border-t border-white/[0.06] px-5 py-3 text-sm">
                         Total recorded:{' '}
                         <strong className="tabular text-ink-900">{money(report.reserveHistory.reduce((s, p) => s + p.amount, 0))}</strong>
                       </div>
@@ -423,7 +423,7 @@ export function ReportsPage() {
                       No estimate snapshots saved for {yearNum} yet.
                     </p>
                   ) : (
-                    <ul className="divide-y divide-ink-100">
+                    <ul className="divide-y divide-white/[0.06]">
                       {report.estimateHistory.map((e) => (
                         <li key={e.id} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
                           <span className="min-w-0 truncate text-ink-700">{formatDate(e.updated_at ?? e.created_at ?? '')}</span>
@@ -445,7 +445,7 @@ export function ReportsPage() {
                     No expenses currently need review — nice and tidy.
                   </p>
                 ) : (
-                  <ul className="divide-y divide-ink-100">
+                  <ul className="divide-y divide-white/[0.06]">
                     {report.needsReview.map(({ expense, explanation }) => (
                       <li key={expense.id} className="flex items-start justify-between gap-3 px-5 py-3">
                         <div className="min-w-0">

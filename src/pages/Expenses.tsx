@@ -230,7 +230,7 @@ export function ExpensesPage() {
             <>
               <table className="hidden w-full text-left text-sm sm:table">
                 <thead>
-                  <tr className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
+                  <tr className="border-b border-white/[0.07] text-[12px] font-medium text-ink-400">
                     <th className="px-5 py-3 font-medium">Date</th>
                     <th className="px-5 py-3 font-medium">Merchant</th>
                     <th className="px-5 py-3 font-medium">Category</th>
@@ -241,7 +241,7 @@ export function ExpensesPage() {
                 </thead>
                 <tbody>
                   {filtered.map((e) => (
-                    <tr key={e.id} className="border-b border-ink-50 last:border-0 hover:bg-white/[0.05]/60">
+                    <tr key={e.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.05]">
                       <td className="whitespace-nowrap px-5 py-3 text-ink-500">{formatDate(e.expense_date)}</td>
                       <td className="px-5 py-3">
                         <div className="flex flex-wrap items-center gap-2">
@@ -262,7 +262,7 @@ export function ExpensesPage() {
                         <div className="inline-flex gap-1">
                           <button
                             onClick={() => { setEditing(e); setFormOpen(true); }}
-                            className="rounded-md p-1.5 text-ink-400 hover:bg-white/[0.08] hover:text-ink-700"
+                            className="rounded-full p-1.5 text-ink-400 hover:bg-white/[0.08] hover:text-ink-700"
                             aria-label={`Edit ${e.merchant}`}
                             title="Edit"
                           >
@@ -270,7 +270,7 @@ export function ExpensesPage() {
                           </button>
                           <button
                             onClick={() => setDeleting(e)}
-                            className="rounded-md p-1.5 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
+                            className="rounded-full p-1.5 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
                             aria-label={`Delete ${e.merchant}`}
                             title="Delete"
                           >
@@ -283,7 +283,7 @@ export function ExpensesPage() {
                 </tbody>
               </table>
 
-              <ul className="divide-y divide-ink-100 sm:hidden">
+              <ul className="divide-y divide-white/[0.06] sm:hidden">
                 {filtered.map((e) => (
                   <li key={e.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                     <div className="min-w-0">
@@ -300,14 +300,14 @@ export function ExpensesPage() {
                       <span className="tabular mr-1 font-semibold text-ink-900">{money(e.amount)}</span>
                       <button
                         onClick={() => { setEditing(e); setFormOpen(true); }}
-                        className="rounded-md p-1.5 text-ink-400 hover:bg-white/[0.08]"
+                        className="rounded-full p-1.5 text-ink-400 hover:bg-white/[0.08]"
                         aria-label={`Edit ${e.merchant}`}
                       >
                         <IconEdit className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setDeleting(e)}
-                        className="rounded-md p-1.5 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
+                        className="rounded-full p-1.5 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
                         aria-label={`Delete ${e.merchant}`}
                       >
                         <IconTrash className="h-4 w-4" />

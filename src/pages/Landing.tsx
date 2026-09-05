@@ -192,7 +192,7 @@ export function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="bg-ink-50/70 py-16 lg:py-20">
+      <section id="how-it-works" className="bg-white/[0.03] py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-brand-700">How it works</p>
@@ -202,7 +202,7 @@ export function LandingPage() {
           </div>
           <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s) => (
-              <li key={s.n} className="rounded-2xl border border-ink-200 bg-surface p-6 shadow-card">
+              <li key={s.n} className="rounded-2xl border border-white/[0.07] bg-surface p-6 shadow-card">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-700/15 text-brand-800 [&>svg]:h-5 [&>svg]:w-5">
                     <s.icon />
@@ -227,7 +227,7 @@ export function LandingPage() {
         </div>
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
-            <li key={f.title} className="rounded-2xl border border-ink-200 p-6 shadow-card">
+            <li key={f.title} className="rounded-2xl border border-white/[0.07] p-6 shadow-card">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-700 text-white [&>svg]:h-5 [&>svg]:w-5">
                 <f.icon />
               </div>
@@ -239,7 +239,7 @@ export function LandingPage() {
       </section>
 
       {/* Pricing summary */}
-      <section className="bg-ink-50/70 py-16 lg:py-20">
+      <section className="bg-white/[0.03] py-16 lg:py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-ink-900">Simple, honest pricing</h2>
@@ -248,7 +248,7 @@ export function LandingPage() {
             </p>
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-ink-200 bg-surface p-8 shadow-card">
+            <div className="rounded-2xl border border-white/[0.07] bg-surface p-8 shadow-card">
               <p className="text-lg font-semibold text-ink-900">Free</p>
               <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">$0</p>
               <p className="mt-1 text-sm text-ink-500">forever, no card required</p>
@@ -263,7 +263,7 @@ export function LandingPage() {
                 <Button variant="secondary" fullWidth size="lg">Start free</Button>
               </Link>
             </div>
-            <div className="relative rounded-2xl border-2 border-brand-700 bg-surface p-8 shadow-pop">
+            <div className="relative rounded-2xl border border-brand-700/50 bg-surface p-8 shadow-raised ring-1 ring-inset ring-brand-700/20">
               <Badge tone="blue" className="absolute -top-3 left-8">MOST POPULAR</Badge>
               <p className="text-lg font-semibold text-ink-900">Pro</p>
               <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">
@@ -294,7 +294,7 @@ export function LandingPage() {
         <h2 className="text-center text-3xl font-semibold tracking-tight text-ink-900">
           Frequently asked questions
         </h2>
-        <div className="mt-8 divide-y divide-ink-200 rounded-2xl border border-ink-200 bg-surface px-6 shadow-card">
+        <div className="mt-8 divide-y divide-white/[0.07] rounded-2xl border border-white/[0.07] bg-surface px-6 shadow-card">
           {FAQS.map((f) => (
             <details key={f.q} className="group py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-medium text-ink-900">

@@ -107,14 +107,14 @@ export function DeductionsPage() {
                 key={f.value}
                 onClick={() => setFilter(f.value)}
                 className={cn(
-                  'rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors',
+                  'rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-all duration-150 ease-ios active:scale-[0.97]',
                   filter === f.value
                     ? 'bg-brand-700 text-white'
-                    : 'bg-surface text-ink-600 ring-1 ring-inset ring-ink-200 hover:bg-white/[0.05]'
+                    : 'bg-white/[0.05] text-ink-600 ring-1 ring-inset ring-white/[0.08] hover:bg-white/[0.09] hover:text-ink-900'
                 )}
               >
                 {f.label}
-                <span className={cn('ml-1.5 tabular', filter === f.value ? 'text-brand-200' : 'text-ink-400')}>
+                <span className={cn('ml-1.5 tabular', filter === f.value ? 'text-white/70' : 'text-ink-400')}>
                   {f.value === 'all' ? totals.total : f.value === 'business' ? totals.business : f.value === 'review' ? totals.review : totals.personal}
                 </span>
               </button>
@@ -169,7 +169,7 @@ function InsightCard({ expense }: { expense: ExpenseEntry }) {
   const partialUse = expense.business_use_percentage < 100 && expense.business_use_percentage > 0;
 
   return (
-    <li className="rounded-xl border border-ink-200 bg-surface p-5 shadow-card">
+    <li className="rounded-xl border border-white/[0.07] bg-surface p-5 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -191,7 +191,7 @@ function InsightCard({ expense }: { expense: ExpenseEntry }) {
         </div>
       </div>
 
-      <div className="mt-3 rounded-lg bg-ink-50 p-3.5 ring-1 ring-inset ring-ink-100">
+      <div className="mt-3 rounded-lg bg-white/[0.04] p-3.5 ring-1 ring-inset ring-white/[0.07]">
         <p className="text-sm leading-relaxed text-ink-700">{insight.explanation}</p>
       </div>
 

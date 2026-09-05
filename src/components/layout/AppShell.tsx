@@ -227,7 +227,7 @@ export function AppShell() {
             className="absolute inset-0 animate-fade-in bg-black/70 backdrop-blur-sm"
             onClick={() => setDrawerOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[288px] max-w-[85vw] flex-col border-r border-white/10 bg-surface-2/95 shadow-pop backdrop-blur-2xl">
+          <aside className="absolute inset-y-0 left-0 flex w-[288px] max-w-[85vw] flex-col border-r border-white/10 bg-surface-2/95 shadow-pop backdrop-blur-xl">
             <div className="flex items-center justify-between px-4 py-5 pt-safe">
               <Brand />
               <button

@@ -70,7 +70,7 @@ export function OnboardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-ink-100">
+    <div className="flex min-h-screen flex-col bg-black">
       <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-8 sm:px-6">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -140,14 +140,14 @@ export function OnboardingPage() {
               />
             </Field>
 
-            <div className="space-y-3 rounded-lg border border-ink-200 bg-ink-50/60 p-4">
+            <div className="space-y-3 rounded-lg border border-white/[0.07] bg-white/[0.03] p-4">
               <Toggle
                 checked={worksFromHome}
                 onChange={setWorksFromHome}
                 label="Do you work from home?"
                 description="Home-office and shared expenses can be partially deductible."
               />
-              <div className="border-t border-ink-100 pt-3">
+              <div className="border-t border-white/[0.06] pt-3">
                 <Field
                   label="Business use of shared expenses"
                   hint="e.g. what % of your internet or phone bill is for work. Used to calculate business-use amounts."

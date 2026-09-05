@@ -147,9 +147,9 @@ export function CopilotPage() {
                   <p className="text-sm font-medium text-ink-400">“{asked}”</p>
                   <p className="mt-2 text-[15px] leading-relaxed text-ink-900">{answer.text}</p>
                   {answer.lines && answer.lines.length > 0 && (
-                    <dl className="mt-4 space-y-1.5 overflow-hidden rounded-xl border border-ink-100">
+                    <dl className="mt-4 space-y-1.5 overflow-hidden rounded-xl border border-white/[0.06]">
                       {answer.lines.map((l) => (
-                        <div key={l.label} className="flex items-baseline justify-between gap-4 bg-ink-50/60 px-4 py-2 text-sm">
+                        <div key={l.label} className="flex items-baseline justify-between gap-4 bg-white/[0.03] px-4 py-2 text-sm">
                           <dt className="text-ink-700">{l.label}</dt>
                           <dd className="tabular font-medium text-ink-900">{l.value}</dd>
                         </div>

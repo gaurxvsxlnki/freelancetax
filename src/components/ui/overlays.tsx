@@ -60,7 +60,7 @@ export function Modal({
       <div
         className={cn(
           'relative flex max-h-[92vh] w-full flex-col overflow-hidden',
-          'rounded-t-3xl border border-white/10 bg-surface-3/95 shadow-pop backdrop-blur-2xl',
+          'rounded-t-3xl border border-white/10 bg-surface-3/95 shadow-pop backdrop-blur-xl',
           'animate-sheet-up sm:animate-scale-in sm:rounded-3xl',
           SIZES[size]
         )}

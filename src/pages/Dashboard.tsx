@@ -478,7 +478,7 @@ export function DashboardPage() {
                     </p>
                   ) : (
                     <>
-                      <ul className="divide-y divide-ink-100">
+                      <ul className="divide-y divide-white/[0.06]">
                         {pro.recurring.map((r) => (
                           <li key={`${r.merchant}-${r.category}`} className="flex items-center justify-between gap-3 px-5 py-3">
                             <div className="min-w-0">
@@ -494,7 +494,7 @@ export function DashboardPage() {
                           </li>
                         ))}
                       </ul>
-                      <div className="border-t border-ink-100 px-5 py-3">
+                      <div className="border-t border-white/[0.06] px-5 py-3">
                         <p className="text-sm text-ink-600">
                           Estimated annual cost:{' '}
                           <strong className="text-ink-900">{money(pro.recurring.reduce((s, r) => s + r.monthlyAmount * 12, 0))}</strong>{' '}
@@ -512,7 +512,7 @@ export function DashboardPage() {
                       your data.
                     </p>
                   ) : (
-                    <ul className="divide-y divide-ink-100">
+                    <ul className="divide-y divide-white/[0.06]">
                       {pro.insights.map((text) => (
                         <li key={text} className="flex items-start gap-3 px-5 py-3.5 text-sm leading-relaxed text-ink-700">
                           <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-500" aria-hidden="true" />
@@ -600,7 +600,7 @@ export function DashboardPage() {
                     subtitle="Business-use amounts by category — compared only where prior-year activity exists"
                     padded={false}
                   >
-                    <ul className="divide-y divide-ink-100">
+                    <ul className="divide-y divide-white/[0.06]">
                       {pro.catCompare.map((c) => {
                         const pct = c.prev > 0 ? Math.round(((c.cur - c.prev) / c.prev) * 100) : 0;
                         return (
@@ -652,7 +652,7 @@ export function DashboardPage() {
                   }
                 />
               ) : (
-                <ul className="divide-y divide-ink-100">
+                <ul className="divide-y divide-white/[0.06]">
                   {stats.insights.map(({ expense, insight }) => {
                     const meta = CLASSIFICATION_META[insight.classification];
                     return (
@@ -675,7 +675,7 @@ export function DashboardPage() {
             <div className="space-y-6">
               <Card title={`Tax reserve · ${year}`} padded={false}>
                 <div className="space-y-4 p-5">
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-3 xs:grid-cols-3">
                     <ReserveLine label="Estimated tax" value={money(stats.estimate.estimatedTax)} />
                     <ReserveLine label="Set aside" value={money(stats.setAside)} tone={stats.gap === 0 ? 'green' : 'neutral'} />
                     <ReserveLine label={stats.gap > 0 ? 'Potential gap' : 'Covered'} value={money(stats.gap)} tone={stats.gap > 0 ? 'amber' : 'green'} />
@@ -704,8 +704,8 @@ export function DashboardPage() {
                     </Button>
                   </div>
                   {stats.yearPayments.length > 0 && (
-                    <div className="border-t border-ink-100 pt-3">
-                      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-500">
+                    <div className="border-t border-white/[0.06] pt-3">
+                      <p className="mb-2 text-[12px] font-medium text-ink-500">
                         Recorded this year
                       </p>
                       <ul className="space-y-1.5">
@@ -725,7 +725,7 @@ export function DashboardPage() {
                               <span className="tabular font-medium text-ink-900">{money(p.amount)}</span>
                               <button
                                 onClick={() => setDeletingPayment(p)}
-                                className="rounded p-1 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
+                                className="rounded-full p-1 text-ink-400 hover:bg-red-500/15 hover:text-red-600"
                                 aria-label={`Delete payment of ${money(p.amount)}`}
                                 title="Delete"
                               >
@@ -744,7 +744,7 @@ export function DashboardPage() {
                 {stats.deadlineList.length === 0 ? (
                   <EmptyState icon={<IconCalendar />} title="No deadlines" description="Nothing scheduled for this tax year." />
                 ) : (
-                  <ul className="divide-y divide-ink-100">
+                  <ul className="divide-y divide-white/[0.06]">
                     {stats.deadlineList.map((d) => (
                       <li key={d.quarterKey} className={cn('flex items-center justify-between gap-3 px-5 py-3', d.daysLeft >= 0 && !d.isPaid && d.daysLeft <= 30 && 'bg-amber-500/[0.07]')}>
                         <div className="min-w-0">
@@ -772,7 +772,7 @@ export function DashboardPage() {
                     ))}
                   </ul>
                 )}
-                <div className="border-t border-ink-100 px-5 py-3">
+                <div className="border-t border-white/[0.06] px-5 py-3">
                   <p className="text-xs leading-relaxed text-ink-500">
                     Deadline dates are statutory estimates. Marking a payment as paid records it in your
                     books only — no money is moved from the app.
@@ -817,9 +817,9 @@ export function DashboardPage() {
 
 function ReserveLine({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'neutral' | 'green' | 'amber' }) {
   return (
-    <div className="rounded-lg bg-ink-50 p-3 ring-1 ring-inset ring-ink-100">
-      <p className="text-xs text-ink-500">{label}</p>
-      <p className={cn('tabular mt-1 text-base font-semibold', tone === 'green' ? 'text-emerald-700' : tone === 'amber' ? 'text-amber-700' : 'text-ink-900')}>
+    <div className="min-w-0 rounded-xl bg-white/[0.04] p-3 ring-1 ring-inset ring-white/[0.07]">
+      <p className="truncate text-[12px] text-ink-500">{label}</p>
+      <p className={cn('tabular mt-1 break-words text-[15px] font-semibold leading-tight', tone === 'green' ? 'text-emerald-600' : tone === 'amber' ? 'text-amber-500' : 'text-ink-900')}>
         {value}
       </p>
     </div>

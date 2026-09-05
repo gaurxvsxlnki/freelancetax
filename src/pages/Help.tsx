@@ -93,7 +93,7 @@ export function HelpPage() {
       <Card title="Get started in 6 steps" subtitle="The fastest path from zero to organized." className="mt-6">
         <ol className="grid gap-4 sm:grid-cols-2">
           {STEPS.map((s, i) => (
-            <li key={s.title} className="flex gap-4 rounded-lg border border-ink-100 bg-ink-50/50 p-4">
+            <li key={s.title} className="flex gap-4 rounded-lg border border-white/[0.06] bg-white/[0.03] p-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-700/15 text-brand-800 [&>svg]:h-5 [&>svg]:w-5">
                 <s.icon />
               </div>
@@ -113,7 +113,7 @@ export function HelpPage() {
       </Card>
 
       <Card title="Frequently asked questions" className="mt-6">
-        <div className="divide-y divide-ink-100">
+        <div className="divide-y divide-white/[0.06]">
           {FAQS.map((f) => (
             <details key={f.q} className="group py-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-ink-900">
@@ -135,7 +135,7 @@ export function HelpPage() {
             you can reach out through your Supabase project's support channels.
           </p>
         </div>
-        <p className="mt-4 rounded-lg bg-ink-50 p-3 text-xs leading-relaxed text-ink-500 ring-1 ring-inset ring-ink-100">
+        <p className="mt-4 rounded-lg bg-white/[0.04] p-3 text-xs leading-relaxed text-ink-500 ring-1 ring-inset ring-white/[0.07]">
           FreelanceTax insights and estimates are for organizational purposes only and are not tax,
           legal, or financial advice. Consider consulting a qualified tax professional for your
           situation.

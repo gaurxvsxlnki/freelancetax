@@ -132,7 +132,7 @@ export function TaxEstimatePage() {
           </div>
 
           <Card className="mt-6" padded={false}>
-            <div className="grid gap-px overflow-hidden rounded-xl bg-ink-100 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-px overflow-hidden rounded-2xl bg-white/[0.07] sm:grid-cols-2 lg:grid-cols-4">
               <EstimateTile label="Estimated tax" value={money(est.estimatedTax)} sub={`${est.rules.label}`} highlight />
               <EstimateTile label="Monthly set-aside" value={money(est.recommendedMonthly)} sub="save this each month" />
               <EstimateTile label="Quarterly set-aside" value={money(est.recommendedQuarterly)} sub="per estimated payment" />
@@ -160,12 +160,12 @@ export function TaxEstimatePage() {
                 <CalcRow label="QBI deduction (estimated)" value={`−${money(est.qbiDeduction)}`} detail="20% of net business income" />
                 <CalcRow label="Standard deduction" value={`−${money(est.rules.standardDeduction)}`} detail={`${est.year} single filer`} />
                 <CalcRow label="Federal income tax" value={money(est.incomeTax)} detail={`on ${money(est.taxableIncome)} taxable income`} />
-                <div className="flex justify-between gap-4 border-t border-ink-100 pt-2.5">
+                <div className="flex justify-between gap-4 border-t border-white/[0.06] pt-2.5">
                   <dt className="font-medium text-ink-900">Estimated total</dt>
                   <dd className="tabular font-semibold text-ink-900">{money(est.estimatedTax)}</dd>
                 </div>
               </dl>
-              <p className="mt-4 rounded-lg bg-ink-50 p-3 text-xs leading-relaxed text-ink-500 ring-1 ring-inset ring-ink-100">
+              <p className="mt-4 rounded-lg bg-white/[0.04] p-3 text-xs leading-relaxed text-ink-500 ring-1 ring-inset ring-white/[0.07]">
                 Simplified single-filer federal estimate only. State taxes, filing status, credits,
                 the Social Security wage base cap, and other individual factors are not included.
                 This is not a tax return.

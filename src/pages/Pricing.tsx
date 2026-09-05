@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import { Seo } from '../components/Seo';
 import { MarketingFooter, MarketingNav } from '../components/marketing';
-import { Alert, Badge, Button } from '../components/ui/primitives';
+import { Alert, Badge, Button, SegmentedControl } from '../components/ui/primitives';
 import { startCheckout, type BillingInterval } from '../lib/billing-api';
 import {
   PRO_MONTHLY_LABEL,
@@ -97,25 +97,22 @@ export function PricingPage() {
         )}
 
         {/* Billing toggle */}
-        <div className="mt-10 flex items-center justify-center gap-3">
-          <button
-            onClick={() => setInterval('month')}
-            className={cn('rounded-lg px-4 py-2 text-sm font-medium', interval === 'month' ? 'bg-brand-700 text-white' : 'bg-ink-100 text-ink-600 hover:bg-white/[0.12]')}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setInterval('year')}
-            className={cn('rounded-lg px-4 py-2 text-sm font-medium', interval === 'year' ? 'bg-brand-700 text-white' : 'bg-ink-100 text-ink-600 hover:bg-white/[0.12]')}
-          >
-            Annual
-            <Badge tone="green" className="ml-2">Save ~{PRO_YEARLY_SAVING_PCT}%</Badge>
-          </button>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <SegmentedControl
+            ariaLabel="Billing interval"
+            value={interval}
+            onChange={setInterval}
+            options={[
+              { value: 'month' as const, label: 'Monthly' },
+              { value: 'year' as const, label: 'Annual' },
+            ]}
+          />
+          {interval === 'year' && <Badge tone="green">Save ~{PRO_YEARLY_SAVING_PCT}%</Badge>}
         </div>
 
         {/* Plan cards */}
         <div className="mx-auto mt-8 grid max-w-3xl gap-6 md:grid-cols-2">
-          <div className="flex flex-col rounded-2xl border border-ink-200 bg-surface p-8 shadow-card">
+          <div className="flex flex-col rounded-2xl border border-white/[0.07] bg-surface p-8 shadow-card">
             <p className="text-lg font-semibold text-ink-900">Free</p>
             <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">$0</p>
             <p className="mt-1 text-sm text-ink-500">forever</p>
@@ -141,7 +138,7 @@ export function PricingPage() {
             )}
           </div>
 
-          <div className="relative flex flex-col rounded-2xl border-2 border-brand-700 bg-surface p-8 shadow-pop">
+          <div className="relative flex flex-col rounded-2xl border border-brand-700/50 bg-surface p-8 shadow-raised ring-1 ring-inset ring-brand-700/20">
             <Badge tone="blue" className="absolute -top-3 left-8">RECOMMENDED</Badge>
             <div className="flex items-baseline justify-between">
               <p className="text-lg font-semibold text-ink-900">Pro</p>
@@ -195,10 +192,10 @@ export function PricingPage() {
         {/* Comparison table */}
         <div className="mt-16">
           <h2 className="text-center text-2xl font-semibold tracking-tight text-ink-900">Compare plans</h2>
-          <div className="mt-6 overflow-x-auto rounded-2xl border border-ink-200">
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-white/[0.07]">
             <table className="w-full min-w-[520px] bg-surface text-left text-sm">
               <thead>
-                <tr className="border-b border-ink-200 bg-ink-50/70">
+                <tr className="border-b border-white/[0.07] bg-white/[0.03]">
                   <th className="px-6 py-4 font-medium text-ink-500">Feature</th>
                   <th className="w-36 px-6 py-4 font-semibold text-ink-900">Free</th>
                   <th className="w-36 bg-brand-700/12 px-6 py-4 font-semibold text-brand-900">Pro</th>
@@ -206,7 +203,7 @@ export function PricingPage() {
               </thead>
               <tbody>
                 {ROWS.map((r) => (
-                  <tr key={r.feature} className="border-b border-ink-100 last:border-0">
+                  <tr key={r.feature} className="border-b border-white/[0.06] last:border-0">
                     <td className="px-6 py-3.5 text-ink-700">{r.feature}</td>
                     <td className="px-6 py-3.5"><CellValue value={r.free} muted /></td>
                     <td className="bg-brand-700/[0.07] px-6 py-3.5"><CellValue value={r.pro} /></td>
@@ -217,7 +214,7 @@ export function PricingPage() {
           </div>
         </div>
 
-        <p className="mt-10 rounded-xl bg-ink-50 p-4 text-center text-xs leading-relaxed text-ink-500">
+        <p className="mt-10 rounded-xl bg-white/[0.04] p-4 text-center text-xs leading-relaxed text-ink-500">
           Estimates and deduction insights are informational only and are not tax advice. Consult a
           qualified tax professional for your situation.
         </p>
