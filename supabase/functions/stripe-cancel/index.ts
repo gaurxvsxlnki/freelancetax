@@ -9,16 +9,16 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { isConfigured, json, requireUser, stripeApi } from '../_shared/stripe.ts';
+import { isConfigured, json, preflight, readJson, requireUser, stripeApi } from '../_shared/stripe.ts';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     if (!isConfigured()) {
       return json({ error: 'Payments are not configured on the server yet.' }, 501);
     }
     const user = await requireUser(req);
-    const { action } = (await req.json()) as { action?: string };
+    const { action } = await readJson<{ action?: string }>(req);
     if (action !== 'cancel' && action !== 'reactivate') {
       return json({ error: 'Unknown action.' }, 400);
     }
@@ -51,6 +51,18 @@ Deno.serve(async (req) => {
     }
 
     const d = res.data;
+    // Mirror the change locally so the UI reflects it immediately; the
+    // customer.subscription.updated webhook remains the source of truth.
+    await admin
+      .from('subscriptions')
+      .update({
+        cancel_at_period_end: Boolean(d.cancel_at_period_end),
+        current_period_end:
+          d.current_period_end != null ? new Date(Number(d.current_period_end) * 1000).toISOString() : null,
+      })
+      .eq('user_id', user.id)
+      .eq('provider_subscription_id', subId);
+
     return json({
       cancelAtPeriodEnd: Boolean(d.cancel_at_period_end),
       currentPeriodEnd: d.current_period_end != null ? new Date(Number(d.current_period_end) * 1000).toISOString() : null,

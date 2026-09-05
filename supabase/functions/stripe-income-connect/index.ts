@@ -9,12 +9,19 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { json, requireUser, userHasProAccess } from '../_shared/stripe.ts';
+import { json, preflight, readJson, requireUser, userHasProAccess } from '../_shared/stripe.ts';
 import { sealToken } from '../_shared/plaid.ts';
-import { ingestCharges, oauthAuthorizeUrl, oauthExchange, stripeIncomeConfigured } from '../_shared/stripe-income.ts';
+import {
+  ingestCharges,
+  oauthAuthorizeUrl,
+  oauthExchange,
+  signState,
+  stripeIncomeConfigured,
+  verifyState,
+} from '../_shared/stripe-income.ts';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     const configError = stripeIncomeConfigured();
     if (configError) return json({ error: configError }, 501);
@@ -23,15 +30,9 @@ Deno.serve(async (req) => {
       return json({ error: 'Income connections are a Pro feature. Upgrade to Pro to link income platforms.' }, 403);
     }
 
-    let code: string | null = null;
-    let state = '';
-    try {
-      const body = (await req.json()) as { code?: string; state?: string };
-      code = typeof body.code === 'string' && body.code ? body.code : null;
-      state = typeof body.state === 'string' ? body.state : '';
-    } catch {
-      code = null;
-    }
+    const body = await readJson<{ code?: string; state?: string }>(req);
+    const code = typeof body.code === 'string' && body.code ? body.code : null;
+    const state = typeof body.state === 'string' ? body.state : '';
 
     // Mode 1: start the OAuth handshake.
     if (!code) {
@@ -39,12 +40,13 @@ Deno.serve(async (req) => {
       if (!appUrl) {
         return json({ error: 'Income connections are not fully configured: APP_URL is missing on the server.' }, 501);
       }
-      return json({ url: oauthAuthorizeUrl(user.id) });
+      return json({ url: oauthAuthorizeUrl(await signState(user.id)) });
     }
 
-    // Mode 2: OAuth returned with a code — finish linking.
-    if (state && state !== user.id) {
-      return json({ error: 'This connection request is not valid for your account.' }, 403);
+    // Mode 2: OAuth returned with a code — finish linking. The state must be a
+    // valid, unexpired signature for THIS user (CSRF protection).
+    if (!(await verifyState(state, user.id))) {
+      return json({ error: 'This connection request is not valid or has expired. Please start again.' }, 403);
     }
     const { stripeUserId, accessToken } = await oauthExchange(code);
     const sealed = await sealToken(accessToken);
@@ -62,7 +64,7 @@ Deno.serve(async (req) => {
         provider_item_id: stripeUserId,
         token_cipher: sealed,
       },
-      { onConflict: 'provider,provider_item_id' }
+      { onConflict: 'user_id,provider,provider_item_id' }
     );
     if (credError) {
       return json({ error: 'We could not store the connection securely. Please try again.' }, 502);
@@ -76,12 +78,13 @@ Deno.serve(async (req) => {
           provider: 'stripe',
           kind: 'income',
           external_account_id: stripeUserId,
+          provider_item_id: stripeUserId,
           institution_name: 'Stripe',
           account_name: 'Stripe payments',
           status: 'active',
           last_error: null,
         },
-        { onConflict: 'provider,kind,external_account_id' }
+        { onConflict: 'user_id,provider,kind,external_account_id' }
       )
       .select('id')
       .single();

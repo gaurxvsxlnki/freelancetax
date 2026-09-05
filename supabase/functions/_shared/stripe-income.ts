@@ -22,6 +22,55 @@ export function stripeIncomeConfigured(): string | null {
   return null;
 }
 
+// --- OAuth state -------------------------------------------------------------
+// The `state` parameter must be unguessable and bound to the user, otherwise an
+// attacker who knows a user id could craft a callback. We sign
+// `<userId>.<expiry>` with HMAC-SHA256 keyed on a server secret.
+
+function stateKeyMaterial(): string {
+  return (
+    Deno.env.get('INTEGRATION_ENC_KEY') ??
+    Deno.env.get('STRIPE_SECRET_KEY') ??
+    ''
+  );
+}
+
+async function hmacHex(message: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(stateKeyMaterial()),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
+  return Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/** Build a signed state token valid for 15 minutes. */
+export async function signState(userId: string): Promise<string> {
+  const expiry = Date.now() + 15 * 60 * 1000;
+  const payload = `${userId}.${expiry}`;
+  return `${payload}.${await hmacHex(payload)}`;
+}
+
+/** Verify a state token belongs to `userId` and has not expired. */
+export async function verifyState(state: string, userId: string): Promise<boolean> {
+  const parts = state.split('.');
+  if (parts.length !== 3) return false;
+  const [stateUser, expiryRaw, signature] = parts;
+  if (stateUser !== userId) return false;
+  const expiry = Number(expiryRaw);
+  if (!Number.isFinite(expiry) || expiry < Date.now()) return false;
+  const expected = await hmacHex(`${stateUser}.${expiryRaw}`);
+  if (expected.length !== signature.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  return diff === 0;
+}
+
 /** Hosted OAuth authorize URL the browser is redirected to. */
 export function oauthAuthorizeUrl(state: string): string {
   const clientId = Deno.env.get('STRIPE_CLIENT_ID') ?? '';

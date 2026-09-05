@@ -15,7 +15,7 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { json, requireUser, userHasProAccess } from '../_shared/stripe.ts';
+import { json, preflight, readJson, requireUser, userHasProAccess } from '../_shared/stripe.ts';
 import { plaidApi, plaidConfig, plaidError, plaidSyncAccount, sealToken } from '../_shared/plaid.ts';
 
 interface LinkMeta {
@@ -27,7 +27,7 @@ interface LinkMeta {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     const cfg = plaidConfig();
     if (cfg.error) return json({ error: cfg.error }, 501);
@@ -36,12 +36,7 @@ Deno.serve(async (req) => {
       return json({ error: 'Bank connections are a Pro feature. Upgrade to Pro to link bank accounts.' }, 403);
     }
 
-    let body: LinkMeta = {};
-    try {
-      body = (await req.json()) as LinkMeta;
-    } catch {
-      body = {};
-    }
+    const body = await readJson<LinkMeta>(req);
     if (!body.publicToken || !body.accountId) {
       return json({ error: 'The bank handshake was incomplete. Please try connecting again.' }, 400);
     }
@@ -72,7 +67,7 @@ Deno.serve(async (req) => {
         provider_item_id: itemId,
         token_cipher: sealed,
       },
-      { onConflict: 'provider,provider_item_id' }
+      { onConflict: 'user_id,provider,provider_item_id' }
     );
     if (credError) {
       return json({ error: 'We could not store the connection securely. Please try again.' }, 502);
@@ -86,13 +81,14 @@ Deno.serve(async (req) => {
           provider: 'plaid',
           kind: 'bank',
           external_account_id: String(body.accountId),
+          provider_item_id: itemId,
           institution_name: String(body.institutionName ?? 'Bank').slice(0, 80),
           account_name: String(body.accountName ?? 'Checking').slice(0, 80),
           account_mask: String(body.accountMask ?? '').slice(0, 8),
           status: 'active',
           last_error: null,
         },
-        { onConflict: 'provider,kind,external_account_id' }
+        { onConflict: 'user_id,provider,kind,external_account_id' }
       )
       .select('id')
       .single();

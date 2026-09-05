@@ -142,7 +142,7 @@ export function ImportsPage() {
         await backend.saveCategoryOverride({
           merchant_key: key,
           category: cat,
-          classification: action === 'income' ? 'business' : 'business',
+          classification: 'business',
         });
       }
       await backend.reviewTransaction({
@@ -168,14 +168,29 @@ export function ImportsPage() {
     setBusy(`bulk-${action}`);
     try {
       let ok = 0;
+      let failed = 0;
       for (const id of ids) {
         const t = transactions.find((x) => x.id === id);
         if (!t) continue;
-        const cat = action === 'personal' ? undefined : bulkCategory || suggestion(t).category;
-        await backend.reviewTransaction({ transactionId: id, action, category: cat });
-        ok += 1;
+        // "Add to expenses" on a mixed selection must add income rows as
+        // income, otherwise the backend rejects them and the loop aborts.
+        const rowAction =
+          action === 'personal' ? 'personal' : t.kind === 'income' ? 'income' : 'business';
+        const cat = rowAction === 'personal' ? undefined : bulkCategory || suggestion(t).category;
+        try {
+          await backend.reviewTransaction({ transactionId: id, action: rowAction, category: cat });
+          ok += 1;
+        } catch {
+          failed += 1;
+        }
       }
-      toast.success(`${ok} ${pluralize(ok, 'transaction')} updated`);
+      if (ok > 0) toast.success(`${ok} ${pluralize(ok, 'transaction')} updated`);
+      if (failed > 0) {
+        toast.error(
+          `${failed} ${pluralize(failed, 'transaction')} could not be updated`,
+          'They were left pending — try them individually.'
+        );
+      }
       setSelected(new Set());
       setBulkCategory('');
       await reload();
@@ -225,7 +240,14 @@ export function ImportsPage() {
   const runSync = async (account: LinkedAccount) => {
     setBusy(`sync-${account.id}`);
     try {
-      const res = account.kind === 'bank' ? await syncBankAccount(account.id) : await syncIncomeAccount(account.id);
+      // Route by PROVIDER, not by kind — an income account could belong to a
+      // provider we have no sync function for (e.g. PayPal).
+      const res =
+        account.provider === 'plaid'
+          ? await syncBankAccount(account.id)
+          : account.provider === 'stripe'
+            ? await syncIncomeAccount(account.id)
+            : { ok: false as const, error: `Syncing ${PROVIDER_LABEL[account.provider] ?? account.provider} accounts isn't supported yet.` };
       if (!res.ok) {
         toast.error('Sync failed', res.error);
       } else {
@@ -244,9 +266,14 @@ export function ImportsPage() {
     setBusy(`disconnect-${disconnectTarget.id}`);
     try {
       const res =
-        disconnectTarget.kind === 'bank'
+        disconnectTarget.provider === 'plaid'
           ? await disconnectBankAccount(disconnectTarget.id)
-          : await disconnectIncomeAccount(disconnectTarget.id);
+          : disconnectTarget.provider === 'stripe'
+            ? await disconnectIncomeAccount(disconnectTarget.id)
+            : {
+                ok: false as const,
+                error: `Disconnecting ${PROVIDER_LABEL[disconnectTarget.provider] ?? disconnectTarget.provider} accounts isn't supported yet.`,
+              };
       if (!res.ok) {
         toast.error('Could not disconnect', res.error);
         return;
@@ -561,6 +588,10 @@ export function ImportsPage() {
         to your records until you review them. Adding an item creates a normal expense or income
         entry (labeled Imported). Your categorization choices are remembered for future syncs.
         Suggestions never claim an expense is definitely deductible.
+        <div className="mt-2">
+          <strong>Supported today:</strong> bank accounts via Plaid and Stripe income. PayPal import
+          is not available yet.
+        </div>
       </div>
 
       <UpgradePromptModal

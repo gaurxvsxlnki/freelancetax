@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { supabaseConfigured } from '../lib/supabase';
 import { getBackend } from '../backend';
-import { Button, Alert } from '../components/ui/primitives';
+import { Button, Alert, Spinner } from '../components/ui/primitives';
 import { Field, Input } from '../components/ui/forms';
 import { IconCheck, IconShield, IconTrendingUp } from '../components/icons';
 
@@ -341,7 +341,7 @@ export function ForgotPasswordPage() {
 /* ---------------------------------- Reset password ---------------------------------- */
 
 export function ResetPasswordPage() {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
   const backend = getBackend();
   const navigate = useNavigate();
   const toast = useToast();
@@ -351,8 +351,15 @@ export function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // supabase-js exchanges the recovery code automatically (detectSessionInUrl).
-  const isRecoverySession = supabaseConfigured && Boolean(searchParams.get('code') || user);
+  // supabase-js exchanges the recovery code automatically (detectSessionInUrl),
+  // which can take a tick — `initializing` covers that window so we don't flash
+  // the "link expired" state at someone who followed a perfectly good link.
+  const hasRecoveryParam = Boolean(
+    searchParams.get('code') ||
+      // Older Supabase recovery links deliver tokens in the URL fragment.
+      (typeof window !== 'undefined' && window.location.hash.includes('access_token'))
+  );
+  const isRecoverySession = supabaseConfigured && Boolean(hasRecoveryParam || user);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -387,12 +394,32 @@ export function ResetPasswordPage() {
         </Link>
       }
     >
-      {!isRecoverySession && !supabaseConfigured ? (
+      {!supabaseConfigured ? (
         <Alert variant="info" title="Demo mode">
           Password reset emails require a Supabase project. Once you add{' '}
           <code className="rounded bg-ink-100 px-1">VITE_SUPABASE_URL</code> and{' '}
           <code className="rounded bg-ink-100 px-1">VITE_SUPABASE_ANON_KEY</code>, reset links
           work end-to-end.
+        </Alert>
+      ) : initializing ? (
+        <div className="flex justify-center py-6">
+          <Spinner className="h-6 w-6 text-brand-600" />
+        </div>
+      ) : !isRecoverySession ? (
+        // Landing here without a recovery session means the link was missing,
+        // already used, or expired. Say so instead of showing a form that can
+        // only fail.
+        <Alert variant="warning" title="This reset link isn't valid">
+          Password reset links can only be used once and expire after a short time. Request a new
+          one and use the most recent email.
+          <div className="mt-3">
+            <Link
+              to="/forgot-password"
+              className="font-medium text-brand-700 hover:underline"
+            >
+              Send a new reset link
+            </Link>
+          </div>
         </Alert>
       ) : (
         <form onSubmit={onSubmit} className="space-y-4" noValidate>

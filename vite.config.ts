@@ -7,6 +7,10 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+    // Dev server only. Allows the app to be previewed through a tunnelled
+    // hostname (Codespaces, e2b, ngrok, …). Has no effect on production
+    // builds, which are served as static files by your host.
+    allowedHosts: true,
   },
   build: {
     sourcemap: false,

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Seo } from '../components/Seo';
 import { MarketingFooter, MarketingNav } from '../components/marketing';
 import { BarChart } from '../components/charts';
+import { PRO_MONTHLY_LABEL, PRO_YEARLY_LABEL, PRO_YEARLY_SAVING_PCT } from '../lib/constants';
 import { Badge, Button } from '../components/ui/primitives';
 import {
   IconCalculator,
@@ -84,7 +85,7 @@ const FAQS = [
   },
   {
     q: 'What does Pro include?',
-    a: 'Pro removes the monthly limits: unlimited expenses, unlimited receipt scans, CSV export, annual reports, and more — for $9.99/month or $79/year.',
+    a: `Pro removes the monthly limits: unlimited expenses, unlimited receipt scans, CSV export, annual reports, and more — for ${PRO_MONTHLY_LABEL}/month or ${PRO_YEARLY_LABEL}/year.`,
   },
   {
     q: 'Does FreelanceTax file my taxes?',
@@ -266,9 +267,9 @@ export function LandingPage() {
               <Badge tone="blue" className="absolute -top-3 left-8">MOST POPULAR</Badge>
               <p className="text-lg font-semibold text-ink-900">Pro</p>
               <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">
-                $9.99<span className="text-base font-normal text-ink-500">/month</span>
+                {PRO_MONTHLY_LABEL}<span className="text-base font-normal text-ink-500">/month</span>
               </p>
-              <p className="mt-1 text-sm text-emerald-700">or $79/year — save ~34%</p>
+              <p className="mt-1 text-sm text-emerald-700">or {PRO_YEARLY_LABEL}/year — save ~{PRO_YEARLY_SAVING_PCT}%</p>
               <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
                 <PlanCheck>Unlimited income &amp; expenses</PlanCheck>
                 <PlanCheck>Unlimited receipt scans</PlanCheck>

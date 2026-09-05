@@ -12,8 +12,12 @@ import { formatDate } from '../lib/format';
 import { expenseEntitlement, receiptEntitlement } from '../lib/subscription';
 import { changeSubscription, openBillingPortal, startCheckout } from '../lib/billing-api';
 import { IconSparkles } from '../components/icons';
+import { PRO_MONTHLY_LABEL, PRO_YEARLY_LABEL, PRO_YEARLY_SAVING_PCT } from '../lib/constants';
 
-const PRICE_LABEL = { month: '$9.99/month', year: '$79/year' } as const;
+const PRICE_LABEL = {
+  month: `${PRO_MONTHLY_LABEL}/month`,
+  year: `${PRO_YEARLY_LABEL}/year`,
+} as const;
 
 export function BillingPage() {
   const backend = getBackend();
@@ -207,7 +211,7 @@ export function BillingPage() {
                   Upgrade to Pro
                 </Button>
                 <Button variant="secondary" onClick={() => void upgrade('year')}>
-                  $79/year — save ~34%
+                  {PRO_YEARLY_LABEL}/year — save ~{PRO_YEARLY_SAVING_PCT}%
                 </Button>
               </>
             )}

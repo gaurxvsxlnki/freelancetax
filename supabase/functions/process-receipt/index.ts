@@ -2,7 +2,7 @@
  * process-receipt — server-side receipt OCR + structured extraction.
  *
  * Deploy with:
- *   supabase functions deploy process-receipt --no-verify-jwt
+ *   supabase functions deploy process-receipt
  *
  * Env vars (set in the Supabase dashboard; never exposed to the browser):
  *   SUPABASE_URL            (injected automatically)
@@ -47,16 +47,26 @@ const NO_PROVIDER_NOTE =
 const PDF_NOTE =
   'This receipt is a PDF. PDF text extraction is not enabled yet — review the file and enter the details manually.';
 
+/** Restrict CORS to the configured app origin when APP_URL is set. */
+function corsHeaders(): Record<string, string> {
+  const appUrl = Deno.env.get('APP_URL') ?? '';
+  return {
+    'Access-Control-Allow-Origin': appUrl || '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    ...(appUrl ? { Vary: 'Origin' } : {}),
+  };
+}
+
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders() },
   });
 }
+
+/** Hard ceiling on what we will base64 + send to a vision model (10 MB). */
+const MAX_PROCESS_BYTES = 10 * 1024 * 1024;
 
 function isImage(fileType: string, fileName: string): boolean {
   return fileType.startsWith('image/') || /\.(jpe?g|png|webp)$/i.test(fileName);
@@ -173,7 +183,7 @@ async function extractWithOpenAI(
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+    return preflight();
   }
 
   try {
@@ -203,7 +213,13 @@ Deno.serve(async (req) => {
     }
 
     // --- Locate the receipt ---------------------------------------------------
-    const { receiptId } = (await req.json()) as { receiptId?: string };
+    let receiptId = '';
+    try {
+      const body = (await req.json()) as { receiptId?: string };
+      receiptId = String(body?.receiptId ?? '');
+    } catch {
+      receiptId = '';
+    }
     if (!receiptId) return json({ error: 'Missing receipt id.' }, 400);
 
     const { data: receipt, error: fetchError } = await admin
@@ -257,6 +273,17 @@ Deno.serve(async (req) => {
       return json({ configured: false, status: 'needs_review', error: PDF_NOTE });
     }
 
+    // --- Refuse oversized files rather than exhausting function memory ---------
+    if (fileBlob.size > MAX_PROCESS_BYTES) {
+      const note =
+        'This file is too large to scan automatically. Review it and enter the details manually.';
+      await admin
+        .from('receipts')
+        .update({ processing_status: 'needs_review', review_note: note })
+        .eq('id', receiptId);
+      return json({ configured: true, status: 'needs_review', error: note });
+    }
+
     // --- Run the vision model -----------------------------------------------------
     let extracted: ExtractionResult;
     try {
@@ -271,33 +298,44 @@ Deno.serve(async (req) => {
         .from('receipts')
         .update({ processing_status: 'needs_review', review_note: note })
         .eq('id', receiptId);
-      return json({ configured: true, status: 'needs_review', error: note, detail: String(err) });
+      console.error('process-receipt extraction failed', err);
+      return json({ configured: true, status: 'needs_review', error: note });
     }
 
     const amount = extracted.amount;
     const date = extracted.date;
 
+    // Only claim "completed" when we actually recovered something usable.
+    // An empty extraction is reported honestly as needing review.
+    const gotSomething = Boolean(extracted.merchant) || amount !== null || Boolean(date);
+    const status = gotSomething ? 'completed' : 'needs_review';
+    const note = gotSomething
+      ? null
+      : 'We scanned this receipt but couldn\u2019t read any details from it. Enter them manually.';
+
     await admin
       .from('receipts')
       .update({
-        processing_status: 'completed',
+        processing_status: status,
         merchant: extracted.merchant,
-        amount: amount === null ? null : amount,
+        amount,
         receipt_date: date,
         extracted_text: extracted.text,
-        review_note: null,
+        review_note: note,
       })
       .eq('id', receiptId);
 
     return json({
       configured: true,
-      status: 'completed',
+      status,
       merchant: extracted.merchant,
       amount,
       date,
       text: extracted.text,
+      ...(note ? { error: note } : {}),
     });
   } catch (err) {
-    return json({ error: 'Receipt processing failed. Please try again.', detail: String(err) }, 500);
+    console.error('process-receipt failed', err);
+    return json({ error: 'Receipt processing failed. Please try again.' }, 500);
   }
 });

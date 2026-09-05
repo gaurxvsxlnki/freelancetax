@@ -6,6 +6,13 @@ import { Seo } from '../components/Seo';
 import { MarketingFooter, MarketingNav } from '../components/marketing';
 import { Alert, Badge, Button } from '../components/ui/primitives';
 import { startCheckout, type BillingInterval } from '../lib/billing-api';
+import {
+  PRO_MONTHLY_LABEL,
+  PRO_YEARLY_LABEL,
+  PRO_YEARLY_PER_MONTH_LABEL,
+  PRO_YEARLY_SAVING_LABEL,
+  PRO_YEARLY_SAVING_PCT,
+} from '../lib/constants';
 import { IconCheck, IconMinus } from '../components/icons';
 import { cn } from '../lib/cn';
 
@@ -25,8 +32,6 @@ const ROWS: FeatureRow[] = [
   { feature: 'Annual reports & CSV export', free: false, pro: true },
   { feature: 'Tax deadline reminders', free: false, pro: true },
 ];
-
-const PRO_MONTHLY = 9.99;
 
 export function PricingPage() {
   const { user } = useAuth();
@@ -104,7 +109,7 @@ export function PricingPage() {
             className={cn('rounded-lg px-4 py-2 text-sm font-medium', interval === 'year' ? 'bg-brand-700 text-white' : 'bg-ink-100 text-ink-600 hover:bg-ink-200')}
           >
             Annual
-            <Badge tone="green" className="ml-2">Save ~34%</Badge>
+            <Badge tone="green" className="ml-2">Save ~{PRO_YEARLY_SAVING_PCT}%</Badge>
           </button>
         </div>
 
@@ -141,17 +146,19 @@ export function PricingPage() {
             <div className="flex items-baseline justify-between">
               <p className="text-lg font-semibold text-ink-900">Pro</p>
               <p className="text-xs text-ink-400">
-                {interval === 'year' ? 'billed $79 yearly' : 'billed monthly'}
+                {interval === 'year' ? `billed ${PRO_YEARLY_LABEL} yearly` : 'billed monthly'}
               </p>
             </div>
             <p className="mt-2 text-4xl font-semibold tracking-tight text-ink-900">
-              {interval === 'year' ? '$79' : `$${PRO_MONTHLY}`}
+              {interval === 'year' ? PRO_YEARLY_LABEL : PRO_MONTHLY_LABEL}
               <span className="text-base font-normal text-ink-500">
                 {interval === 'year' ? '/year' : '/month'}
               </span>
             </p>
             <p className="mt-1 text-sm text-emerald-700">
-              {interval === 'year' ? `≈ $6.58/month — save $40.88 a year` : 'or $79/year with annual billing'}
+              {interval === 'year'
+                ? `≈ ${PRO_YEARLY_PER_MONTH_LABEL}/month — save ${PRO_YEARLY_SAVING_LABEL} a year`
+                : `or ${PRO_YEARLY_LABEL}/year with annual billing`}
             </p>
             <ul className="mt-6 flex-1 space-y-2.5 text-sm text-ink-700">
               <PlanLine ok>Unlimited income &amp; expenses</PlanLine>

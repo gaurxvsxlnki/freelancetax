@@ -11,7 +11,7 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { json, stripeApi, verifyStripeSignature } from '../_shared/stripe.ts';
+import { json, preflight, stripeApi, verifyStripeSignature } from '../_shared/stripe.ts';
 
 const MAP_STATUS: Record<string, string> = {
   active: 'active',
@@ -47,7 +47,7 @@ function unixToIso(sec?: number): string | null {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET') ?? '';
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -66,16 +66,57 @@ Deno.serve(async (req) => {
       return json({ error: 'Invalid webhook signature.' }, 400);
     }
 
-    const event = JSON.parse(payload) as { type?: string; data?: { object?: Record<string, unknown> } };
+    const event = JSON.parse(payload) as {
+      id?: string;
+      type?: string;
+      data?: { object?: Record<string, unknown> };
+    };
     const type = event.type ?? '';
+    const eventId = event.id ?? '';
     const obj = event.data?.object ?? {};
+
+    // Idempotency: Stripe retries deliveries. Claim the event id first; if the
+    // insert conflicts we have already applied this event, so acknowledge and
+    // do nothing (prevents replayed invoice.* events flipping status).
+    if (eventId) {
+      const { error: claimError } = await admin
+        .from('stripe_webhook_events')
+        .insert({ event_id: eventId, event_type: type });
+      if (claimError) {
+        if (claimError.code === '23505') {
+          return json({ received: true, duplicate: true });
+        }
+        // Ledger unavailable: fail loudly so Stripe retries rather than
+        // silently processing without replay protection.
+        return json({ error: 'Webhook ledger unavailable.' }, 500);
+      }
+    }
 
     if (type === 'checkout.session.completed') {
       const subId = obj.subscription ? String(obj.subscription) : null;
+      const metadata = (obj.metadata ?? {}) as Record<string, unknown>;
       if (subId) {
-        const userId = String(obj.metadata?.user_id ?? obj.client_reference_id ?? '');
+        const userId = String(metadata.user_id ?? obj.client_reference_id ?? '');
         const customerId = obj.customer ? String(obj.customer) : null;
         if (userId) {
+          // Never assume 'active' — read the authoritative state from Stripe
+          // (a session can complete while the first payment is still pending).
+          let status = 'incomplete';
+          let interval: 'month' | 'year' | null = null;
+          let periodStart: string | null = null;
+          let periodEnd: string | null = null;
+          let cancelAtPeriodEnd = false;
+          if (Deno.env.get('STRIPE_SECRET_KEY')) {
+            const fetched = await stripeApi(`/subscriptions/${subId}`);
+            if (fetched.status === 200 && fetched.data) {
+              const sub = fetched.data as unknown as StripeSubscription;
+              status = MAP_STATUS[sub.status] ?? 'incomplete';
+              interval = subInterval(sub);
+              periodStart = unixToIso(sub.current_period_start);
+              periodEnd = unixToIso(sub.current_period_end);
+              cancelAtPeriodEnd = Boolean(sub.cancel_at_period_end);
+            }
+          }
           await admin.from('subscriptions').upsert(
             {
               user_id: userId,
@@ -83,7 +124,11 @@ Deno.serve(async (req) => {
               provider_customer_id: customerId,
               provider_subscription_id: subId,
               plan: 'pro',
-              status: 'active',
+              billing_interval: interval,
+              status,
+              current_period_start: periodStart,
+              current_period_end: periodEnd,
+              cancel_at_period_end: cancelAtPeriodEnd,
             },
             { onConflict: 'provider_subscription_id' }
           );
@@ -140,11 +185,15 @@ Deno.serve(async (req) => {
         const nextStatus = type === 'invoice.payment_succeeded' ? 'active' : 'past_due';
         const { data: rows } = await admin
           .from('subscriptions')
-          .select('id')
+          .select('id, status')
           .eq('provider_subscription_id', subscriptionId)
           .limit(1);
-        if (rows?.[0]?.id) {
-          await admin.from('subscriptions').update({ status: nextStatus }).eq('id', String(rows[0].id));
+        const current = rows?.[0];
+        // A late invoice event must never resurrect a cancelled/expired plan;
+        // customer.subscription.* is authoritative for terminal states.
+        const terminal = current?.status === 'cancelled' || current?.status === 'expired';
+        if (current?.id && !terminal) {
+          await admin.from('subscriptions').update({ status: nextStatus }).eq('id', String(current.id));
         }
       }
       return json({ received: true });
@@ -152,7 +201,9 @@ Deno.serve(async (req) => {
 
     return json({ received: true, unhandled: type });
   } catch (err) {
-    return json({ error: String(err) }, 500);
+    // Log server-side only; the response must not echo internals to callers.
+    console.error('stripe-webhook failed', err);
+    return json({ error: 'Webhook processing failed.' }, 500);
   }
 });
 

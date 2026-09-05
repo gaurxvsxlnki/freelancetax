@@ -13,15 +13,41 @@ export interface AppUser {
   email: string;
 }
 
+/**
+ * CORS: when APP_URL is configured we echo only that origin, so a hostile page
+ * cannot read responses from these functions in a victim's browser. Without
+ * APP_URL (local development) we fall back to '*'; every function still
+ * authenticates the caller's bearer token, so this is not an auth boundary.
+ */
+export function corsHeaders(): Record<string, string> {
+  const appUrl = Deno.env.get('APP_URL') ?? '';
+  return {
+    'Access-Control-Allow-Origin': appUrl || '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    ...(appUrl ? { Vary: 'Origin' } : {}),
+  };
+}
+
+export function preflight(): Response {
+  return new Response('ok', { headers: corsHeaders() });
+}
+
 export function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders() },
   });
+}
+
+/** Parse a JSON body without throwing on empty/invalid payloads. */
+export async function readJson<T extends Record<string, unknown>>(req: Request): Promise<T> {
+  try {
+    const parsed = await req.json();
+    return (parsed && typeof parsed === 'object' ? parsed : {}) as T;
+  } catch {
+    return {} as T;
+  }
 }
 
 export function isConfigured(): boolean {

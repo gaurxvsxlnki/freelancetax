@@ -70,6 +70,42 @@ export function finishStripeIncome(code: string, state: string): Promise<Integra
   return invoke('stripe-income-connect', { code, state });
 }
 
+// ---------------------------------------------------------------------------
+// PayPal income import — NOT IMPLEMENTED.
+//
+// There is deliberately no PayPal client code here, and nothing in the UI
+// pretends the integration exists. The database already models it (the
+// `provider` check constraint on linked_accounts allows 'paypal', and
+// `transactions` is provider-agnostic), so implementing it is additive:
+//
+//   1. Add supabase/functions/paypal-connect|sync|disconnect, mirroring the
+//      stripe-income-* trio: authenticate with requireUser(), gate on
+//      userHasProAccess(), store the OAuth token via sealToken() in
+//      integration_credentials, and insert rows into `transactions` with
+//      kind: 'income', status: 'pending'.
+//   2. Add PAYPAL_CLIENT_ID / PAYPAL_SECRET / PAYPAL_ENV to the edge function
+//      secrets (server-side only) and to .env.example.
+//   3. Implement the three functions below and surface a "Connect PayPal"
+//      button on the Imports page.
+//
+// Until then these throw a clear, honest error rather than silently failing.
+// ---------------------------------------------------------------------------
+
+export const PAYPAL_NOT_IMPLEMENTED =
+  'PayPal import isn\u2019t available yet. Bank (Plaid) and Stripe income connections are supported today.';
+
+export function connectPaypalIncome(): Promise<IntegrationResult> {
+  return Promise.resolve({ ok: false, error: PAYPAL_NOT_IMPLEMENTED });
+}
+
+export function syncPaypalIncome(): Promise<IntegrationResult> {
+  return Promise.resolve({ ok: false, error: PAYPAL_NOT_IMPLEMENTED });
+}
+
+export function disconnectPaypalIncome(): Promise<IntegrationResult> {
+  return Promise.resolve({ ok: false, error: PAYPAL_NOT_IMPLEMENTED });
+}
+
 export function syncIncomeAccount(accountId: string): Promise<IntegrationResult> {
   return invoke('stripe-income-sync', { accountId });
 }

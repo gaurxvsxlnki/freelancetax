@@ -9,11 +9,11 @@
  * public_token to plaid-exchange.
  */
 
-import { json, requireUser, userHasProAccess } from '../_shared/stripe.ts';
+import { json, preflight, requireUser, userHasProAccess } from '../_shared/stripe.ts';
 import { plaidApi, plaidConfig } from '../_shared/plaid.ts';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     const cfg = plaidConfig();
     if (cfg.error) return json({ error: cfg.error }, 501);

@@ -62,21 +62,85 @@ export const ACCEPTED_RECEIPT_TYPES = [
   '.jpg', '.jpeg', '.png', '.webp', '.pdf',
 ] as const;
 
+/** MIME types the storage bucket accepts (mirrors the Supabase migration). */
+export const ACCEPTED_RECEIPT_MIME = [
+  'image/jpeg', 'image/png', 'image/webp', 'application/pdf',
+] as const;
+
+/** Server-side ceiling, enforced by the storage bucket too. */
+export const MAX_RECEIPT_BYTES = 10 * 1024 * 1024; // 10 MB
+
 export const MAX_RECEIPT_BYTES_LOCAL = 2_500_000; // localStorage demo guard
+
+export interface ReceiptFileCheck {
+  ok: boolean;
+  error?: string;
+}
+
+/**
+ * Single source of truth for receipt file validation, shared by the upload UI
+ * and both backends. Extension AND declared MIME type must both be acceptable
+ * so a renamed executable cannot slip through on extension alone.
+ */
+export function validateReceiptFile(
+  file: { name: string; size: number; type: string },
+  maxBytes: number = MAX_RECEIPT_BYTES
+): ReceiptFileCheck {
+  const lower = file.name.toLowerCase();
+  const extOk = ACCEPTED_RECEIPT_TYPES.some((t) => lower.endsWith(t));
+  if (!extOk) {
+    return { ok: false, error: 'Please upload a JPG, PNG, WebP, or PDF file.' };
+  }
+  // Browsers sometimes report an empty type; fall back to the extension check.
+  if (file.type && !ACCEPTED_RECEIPT_MIME.includes(file.type as (typeof ACCEPTED_RECEIPT_MIME)[number])) {
+    return { ok: false, error: 'Please upload a JPG, PNG, WebP, or PDF file.' };
+  }
+  if (file.size <= 0) {
+    return { ok: false, error: 'This file appears to be empty. Please choose another file.' };
+  }
+  if (file.size > maxBytes) {
+    const mb = Math.round((maxBytes / (1024 * 1024)) * 10) / 10;
+    return { ok: false, error: `This file is too large (max ${mb} MB). Please choose a smaller file.` };
+  }
+  return { ok: true };
+}
 
 // --- Free plan limits --------------------------------------------------------
 export const FREE_EXPENSES_PER_MONTH = 20;
 export const FREE_RECEIPT_SCANS_PER_MONTH = 5;
 
+/**
+ * Advertised Pro pricing. This is DISPLAY ONLY — Stripe is the source of truth
+ * for what is actually charged, driven by STRIPE_PRICE_MONTHLY /
+ * STRIPE_PRICE_YEARLY on the server. Keep these in sync with your Stripe
+ * Prices or the marketing copy will lie about the amount.
+ */
 export const PLAN_FEATURES = {
   pro_monthly_price: 9.99,
   pro_yearly_price: 79,
 } as const;
 
-/** When true, real payment credentials are required to upgrade (no fake flows). */
-export function canProcessPayments(backendMode: string): boolean {
-  return backendMode === 'supabase';
+/** "$9.99" / "$79" — trims a trailing .00 so whole dollars read cleanly. */
+export function formatPlanPrice(value: number): string {
+  return Number.isInteger(value) ? `$${value}` : `$${value.toFixed(2)}`;
 }
+
+export const PRO_MONTHLY_LABEL = formatPlanPrice(PLAN_FEATURES.pro_monthly_price);
+export const PRO_YEARLY_LABEL = formatPlanPrice(PLAN_FEATURES.pro_yearly_price);
+
+/** Effective monthly cost when paying yearly, e.g. "$6.58". */
+export const PRO_YEARLY_PER_MONTH_LABEL = `$${(PLAN_FEATURES.pro_yearly_price / 12).toFixed(2)}`;
+
+/** Absolute saving from annual billing, e.g. "$40.88". */
+export const PRO_YEARLY_SAVING_LABEL = `$${(
+  PLAN_FEATURES.pro_monthly_price * 12 -
+  PLAN_FEATURES.pro_yearly_price
+).toFixed(2)}`;
+
+/** Percentage saved by paying yearly, e.g. 34. */
+export const PRO_YEARLY_SAVING_PCT = Math.round(
+  (1 - PLAN_FEATURES.pro_yearly_price / (PLAN_FEATURES.pro_monthly_price * 12)) * 100
+);
 
 /** Wording rules for AI/insights — never guarantee deductibility. */
 export const INSIGHT_DISCLAIMER =

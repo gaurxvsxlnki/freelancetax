@@ -12,10 +12,10 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { isConfigured, json, requireUser, stripeApi } from '../_shared/stripe.ts';
+import { isConfigured, json, preflight, readJson, requireUser, stripeApi } from '../_shared/stripe.ts';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     if (!isConfigured()) {
       return json(
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     }
 
     const user = await requireUser(req);
-    const { interval } = (await req.json()) as { interval?: string };
+    const { interval } = await readJson<{ interval?: string }>(req);
     if (interval !== 'month' && interval !== 'year') {
       return json({ error: 'Please choose monthly or yearly billing.' }, 400);
     }

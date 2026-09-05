@@ -69,6 +69,7 @@ export function TaxEstimatePage() {
         calculation_metadata: {
           rules: calc.estimate.rules.label,
           net_earnings: calc.estimate.netEarnings,
+          se_tax_deduction: calc.estimate.seTaxDeduction,
           qbi_deduction: calc.estimate.qbiDeduction,
           taxable_income: calc.estimate.taxableIncome,
           self_employment_tax: calc.estimate.selfEmploymentTax,
@@ -155,16 +156,19 @@ export function TaxEstimatePage() {
             <Card title="How this estimate is calculated" subtitle={est.rules.label}>
               <dl className="space-y-2.5 text-sm">
                 <CalcRow label="Self-employment tax" value={money(est.selfEmploymentTax)} detail={`${Math.round(est.rules.selfEmploymentRate * 100)}% × 92.35% of net earnings`} />
-                <CalcRow label="Federal income tax" value={money(est.incomeTax)} detail="after standard deduction" />
+                <CalcRow label="Deduction for ½ self-employment tax" value={`−${money(est.seTaxDeduction)}`} detail="reduces taxable income" />
                 <CalcRow label="QBI deduction (estimated)" value={`−${money(est.qbiDeduction)}`} detail="20% of net business income" />
+                <CalcRow label="Standard deduction" value={`−${money(est.rules.standardDeduction)}`} detail={`${est.year} single filer`} />
+                <CalcRow label="Federal income tax" value={money(est.incomeTax)} detail={`on ${money(est.taxableIncome)} taxable income`} />
                 <div className="flex justify-between gap-4 border-t border-ink-100 pt-2.5">
                   <dt className="font-medium text-ink-900">Estimated total</dt>
                   <dd className="tabular font-semibold text-ink-900">{money(est.estimatedTax)}</dd>
                 </div>
               </dl>
               <p className="mt-4 rounded-lg bg-ink-50 p-3 text-xs leading-relaxed text-ink-500 ring-1 ring-inset ring-ink-100">
-                Simplified single-filer federal estimate only. State taxes, filing status, and other
-                individual factors are not included. This is not a tax return.
+                Simplified single-filer federal estimate only. State taxes, filing status, credits,
+                the Social Security wage base cap, and other individual factors are not included.
+                This is not a tax return.
               </p>
             </Card>
           </div>

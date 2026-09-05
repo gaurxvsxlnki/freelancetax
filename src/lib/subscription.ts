@@ -4,12 +4,22 @@ import type { Subscription, SubscriptionPlan, SubscriptionStatus, UsageInfo } fr
 /** Statuses where Pro access is honored. past_due keeps access (grace period). */
 const PRO_HONORED: SubscriptionStatus[] = ['active', 'trialing', 'past_due'];
 
+/**
+ * Effective Pro access.
+ *
+ * This mirrors `userHasProAccess()` in supabase/functions/_shared/stripe.ts —
+ * the two MUST agree or the UI and the server disagree about who is Pro. Note
+ * this is a display/UX helper only: every privileged operation is
+ * re-authorized server-side (edge functions + database triggers).
+ */
 export function isEffectivePro(subscription: Subscription | null): boolean {
-  return Boolean(
-    subscription &&
-      subscription.plan === 'pro' &&
-      PRO_HONORED.includes(subscription.status)
-  );
+  if (!subscription || subscription.plan !== 'pro') return false;
+  if (PRO_HONORED.includes(subscription.status)) return true;
+  // Cancelled but already paid through the end of the period keeps access.
+  if (subscription.status === 'cancelled' && subscription.cancel_at_period_end && subscription.current_period_end) {
+    return new Date(subscription.current_period_end).getTime() > Date.now();
+  }
+  return false;
 }
 
 /** Effective plan for display/decisions: null subscription => Free. */

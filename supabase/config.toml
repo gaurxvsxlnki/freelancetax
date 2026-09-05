@@ -4,9 +4,10 @@
 
 project_id = "freelancetax"
 
-[functions.process_receipt]
-# The edge function verifies the caller itself and is meant to be invoked by
-# signed-in users with their access token, so JWT verification is enabled.
+[functions.process-receipt]
+# NOTE: the key must match the function DIRECTORY name (supabase/functions/
+# process-receipt). It was previously "process_receipt", which silently did
+# nothing. The function also verifies the caller's token itself.
 verify_jwt = true
 
 [functions.stripe-checkout]

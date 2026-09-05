@@ -218,7 +218,7 @@ export function SettingsPage() {
                 checked={emailReminders}
                 onChange={setEmailReminders}
                 label="Quarterly deadline reminders"
-                description="Receive a reminder before estimated payment deadlines. (Emails require a Supabase project to send.)"
+                description="Show quarterly deadline reminders in the app. Email delivery is not part of FreelanceTax yet — see Help for the current status."
               />
             </div>
             <div className="space-y-1 rounded-lg border border-ink-200 bg-ink-50/60 p-2">

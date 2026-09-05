@@ -5,7 +5,7 @@ import { useSubscription } from '../context/SubscriptionContext';
 import { useToast } from '../context/ToastContext';
 import { useAsync } from '../lib/useAsync';
 import { receiptEntitlement } from '../lib/subscription';
-import { ACCEPTED_RECEIPT_TYPES, EXPENSE_CATEGORIES } from '../lib/constants';
+import { EXPENSE_CATEGORIES, MAX_RECEIPT_BYTES, MAX_RECEIPT_BYTES_LOCAL, validateReceiptFile } from '../lib/constants';
 import { formatDate, formatDateLong, moneyCents, parseAmount, todayISO } from '../lib/format';
 import type { ExpenseEntry, Receipt, ReceiptStatus } from '../lib/types';
 import { PageHeader } from '../components/layout/AppShell';
@@ -119,10 +119,9 @@ export function ReceiptsPage() {
         setUpgradeOpen(true);
         return;
       }
-      const lower = file.name.toLowerCase();
-      const ok = ACCEPTED_RECEIPT_TYPES.some((t) => lower.endsWith(t));
-      if (!ok) {
-        toast.error('Unsupported file', 'Please upload a JPG, PNG, WebP, or PDF file.');
+      const check = validateReceiptFile(file, backend.isDemo ? MAX_RECEIPT_BYTES_LOCAL : MAX_RECEIPT_BYTES);
+      if (!check.ok) {
+        toast.error('This file can\u2019t be uploaded', check.error);
         return;
       }
       setUploading(true);

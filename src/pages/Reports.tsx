@@ -301,7 +301,7 @@ export function ReportsPage() {
             {report.income.length === 0 ? (
               <p className="px-5 py-8 text-center text-sm text-ink-500">No income recorded for {yearNum}.</p>
             ) : (
-              <table className="w-full text-left text-sm">
+              <div className="overflow-x-auto"><table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
                     <th className="px-5 py-3 font-medium">Date</th>
@@ -320,7 +320,7 @@ export function ReportsPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             )}
           </Card>
 
@@ -332,7 +332,7 @@ export function ReportsPage() {
             {report.expenses.length === 0 ? (
               <p className="px-5 py-8 text-center text-sm text-ink-500">No expenses recorded for {yearNum}.</p>
             ) : (
-              <table className="w-full text-left text-sm">
+              <div className="overflow-x-auto"><table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
                     <th className="px-5 py-3 font-medium">Date</th>
@@ -357,7 +357,7 @@ export function ReportsPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             )}
           </Card>
 

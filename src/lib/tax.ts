@@ -3,8 +3,14 @@
  *
  * IMPORTANT: These are informational estimates, not filing guidance.
  * - Self-employment tax: 15.3% on 92.35% of net earnings.
- * - Federal income tax: single-filer brackets after the standard deduction.
+ * - Deduction for one-half of SE tax: subtracted before income tax (Sch. 1).
  * - QBI deduction: approximated at 20% of net business income.
+ * - Federal income tax: single-filer brackets after the standard deduction.
+ *
+ * Simplifications (documented so nobody mistakes this for a filing engine):
+ * the Social Security wage base cap and the Additional Medicare surtax are not
+ * modelled, QBI is not phase-limited, and only single filers with no other
+ * income, credits, or state tax are represented.
  *
  * Rules are versioned per tax year so new years can be added without
  * touching the UI. Unknown years fall back to the latest published rules
@@ -81,6 +87,8 @@ export interface TaxEstimateResult {
   year: number;
   rules: TaxYearRules;
   netEarnings: number;
+  /** Deductible half of self-employment tax (reduces taxable income). */
+  seTaxDeduction: number;
   qbiDeduction: number;
   taxableIncome: number;
   selfEmploymentTax: number;
@@ -108,15 +116,24 @@ export function estimateTax(input: TaxEstimateInput): TaxEstimateResult {
   const rules = getTaxRules(input.year);
   const netEarnings = Math.max(0, input.totalIncome - input.businessExpenses);
 
-  // QBI approximated at 20% of net business income (simplified single filer).
-  const qbiDeduction = Math.max(0, netEarnings * rules.qbiRate);
-
   // SE tax on 92.35% of net earnings.
   const seBase = Math.max(0, netEarnings * rules.selfEmploymentNetFactor);
   const selfEmploymentTax = seBase * rules.selfEmploymentRate;
 
-  // Federal income tax on (net − QBI − standard deduction), floored at 0.
-  const taxableIncome = Math.max(0, netEarnings - qbiDeduction - rules.standardDeduction);
+  // Half of the SE tax is an above-the-line deduction (Schedule 1). Omitting
+  // it materially overstates the income tax owed.
+  const seTaxDeduction = selfEmploymentTax / 2;
+
+  // QBI approximated at 20% of net business income after the SE-tax deduction
+  // (simplified single filer; no phase-out modelled).
+  const qbiBase = Math.max(0, netEarnings - seTaxDeduction);
+  const qbiDeduction = qbiBase * rules.qbiRate;
+
+  // Federal income tax on (net − ½SE − QBI − standard deduction), floored at 0.
+  const taxableIncome = Math.max(
+    0,
+    netEarnings - seTaxDeduction - qbiDeduction - rules.standardDeduction
+  );
   const incomeTax = bracketTax(rules.brackets, taxableIncome);
 
   const estimatedTax = selfEmploymentTax + incomeTax;
@@ -131,6 +148,7 @@ export function estimateTax(input: TaxEstimateInput): TaxEstimateResult {
     year: input.year,
     rules,
     netEarnings: round2(netEarnings),
+    seTaxDeduction: round2(seTaxDeduction),
     qbiDeduction: round2(qbiDeduction),
     taxableIncome: round2(taxableIncome),
     selfEmploymentTax: round2(selfEmploymentTax),

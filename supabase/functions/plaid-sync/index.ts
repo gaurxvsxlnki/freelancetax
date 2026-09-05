@@ -8,11 +8,11 @@
  * linked_accounts row so repeated syncs only add what's new.
  */
 
-import { json, requireUser, userHasProAccess } from '../_shared/stripe.ts';
+import { json, preflight, readJson, requireUser, userHasProAccess } from '../_shared/stripe.ts';
 import { adminClient, openToken, plaidConfig, plaidSyncAccount } from '../_shared/plaid.ts';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     const cfg = plaidConfig();
     if (cfg.error) return json({ error: cfg.error }, 501);
@@ -21,13 +21,8 @@ Deno.serve(async (req) => {
       return json({ error: 'Bank connections are a Pro feature. Upgrade to Pro to keep syncing.' }, 403);
     }
 
-    let accountId = '';
-    try {
-      const body = (await req.json()) as { accountId?: string };
-      accountId = String(body.accountId ?? '');
-    } catch {
-      accountId = '';
-    }
+    const { accountId: rawAccountId } = await readJson<{ accountId?: string }>(req);
+    const accountId = String(rawAccountId ?? '');
     if (!accountId) return json({ error: 'Please choose a bank account to sync.' }, 400);
 
     const admin = adminClient();
@@ -41,14 +36,31 @@ Deno.serve(async (req) => {
       return json({ error: 'This bank account is no longer connected.' }, 404);
     }
 
-    const { data: cred } = await admin
-      .from('integration_credentials')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('provider', 'plaid')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    // Resolve the credential for THIS account's provider item. Older rows may
+    // predate provider_item_id, so fall back to the most recent credential.
+    const itemId = account.provider_item_id ? String(account.provider_item_id) : '';
+    let cred: { token_cipher?: string } | null = null;
+    if (itemId) {
+      const { data } = await admin
+        .from('integration_credentials')
+        .select('token_cipher')
+        .eq('user_id', user.id)
+        .eq('provider', 'plaid')
+        .eq('provider_item_id', itemId)
+        .maybeSingle();
+      cred = data;
+    }
+    if (!cred?.token_cipher) {
+      const { data } = await admin
+        .from('integration_credentials')
+        .select('token_cipher')
+        .eq('user_id', user.id)
+        .eq('provider', 'plaid')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      cred = data;
+    }
     if (!cred?.token_cipher) {
       return json({ error: 'This connection is missing its credentials — please reconnect the bank.' }, 409);
     }

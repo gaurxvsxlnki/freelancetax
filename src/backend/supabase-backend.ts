@@ -1,6 +1,11 @@
 import { supabase, receiptProcessorUrl } from '../lib/supabase';
 import { newId } from '../lib/id';
-import { FREE_EXPENSES_PER_MONTH, FREE_RECEIPT_SCANS_PER_MONTH } from '../lib/constants';
+import {
+  FREE_EXPENSES_PER_MONTH,
+  FREE_RECEIPT_SCANS_PER_MONTH,
+  MAX_RECEIPT_BYTES,
+  validateReceiptFile,
+} from '../lib/constants';
 import type {
   CategoryOverride,
   ExpenseEntry,
@@ -419,6 +424,9 @@ export class SupabaseBackend implements FinanceBackend {
   async uploadReceipt(file: File): Promise<Receipt> {
     const client = requireClient();
     const user = await requireUser();
+    // Validate before creating any row so a rejected file leaves no orphan.
+    const check = validateReceiptFile(file, MAX_RECEIPT_BYTES);
+    if (!check.ok) throw new Error(check.error);
     const receiptId = newId();
     const ext = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')) : '';
     const filePath = `${user.id}/${receiptId}${ext}`;
@@ -477,6 +485,8 @@ export class SupabaseBackend implements FinanceBackend {
       .eq('user_id', user.id)
       .maybeSingle();
     if (!existing) throw new Error('This receipt no longer exists.');
+    const check = validateReceiptFile(file, MAX_RECEIPT_BYTES);
+    if (!check.ok) throw new Error(check.error);
 
     const oldPath = existing.file_path ? String(existing.file_path) : '';
     const ext = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')) : '';
@@ -523,58 +533,96 @@ export class SupabaseBackend implements FinanceBackend {
     return receipt;
   }
 
-  /** Attempt server-side receipt processing. Honest fallback: needs review. */
+  /**
+   * Attempt server-side receipt processing.
+   *
+   * Transport: an explicit VITE_RECEIPT_PROCESSOR_URL when set, otherwise the
+   * project's own `process-receipt` edge function (so a standard Supabase
+   * deploy works with no extra configuration). Either way the request is
+   * authenticated with the caller's access token and the function re-checks
+   * ownership. Any failure degrades honestly to "needs review" — we never
+   * claim a receipt was processed when it wasn't.
+   */
   private async processReceipt(receipt: Receipt): Promise<Receipt> {
     const client = requireClient();
+    const NEEDS_REVIEW_NOTE =
+      'Automatic receipt scanning isn\u2019t configured for this project yet, so no details were extracted. Review the file and enter the details manually.';
+    const UNAVAILABLE_NOTE =
+      'The receipt scanner is not responding right now. You can review and enter the details manually.';
 
-    if (!receiptProcessorUrl) {
-      const note =
-        'Automatic receipt scanning isn\u2019t configured for this project yet, so no details were extracted. Review the file and enter the details manually.';
-      return this.updateReceipt(receipt.id, { processing_status: 'needs_review', review_note: note });
+    interface ProcessorResult {
+      configured?: boolean;
+      status?: string;
+      merchant?: string;
+      amount?: number | null;
+      date?: string | null;
+      text?: string | null;
+      error?: string;
     }
 
-    const { data: session } = await client.auth.getSession();
-    const token = session.session?.access_token;
+    let result: ProcessorResult | null = null;
     try {
-      const res = await fetch(receiptProcessorUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ receiptId: receipt.id }),
-      });
-      if (!res.ok) {
-        const note = 'The receipt scanner is not responding right now. You can review and enter the details manually.';
-        return this.updateReceipt(receipt.id, { processing_status: 'needs_review', review_note: note });
+      if (receiptProcessorUrl) {
+        const { data: session } = await client.auth.getSession();
+        const token = session.session?.access_token;
+        // Never hang the upload UI on an unresponsive processor.
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 60_000);
+        try {
+          const res = await fetch(receiptProcessorUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({ receiptId: receipt.id }),
+            signal: controller.signal,
+          });
+          if (!res.ok) {
+            return this.updateReceipt(receipt.id, {
+              processing_status: 'needs_review',
+              review_note: UNAVAILABLE_NOTE,
+            });
+          }
+          result = (await res.json()) as ProcessorResult;
+        } finally {
+          clearTimeout(timer);
+        }
+      } else {
+        const { data, error } = await client.functions.invoke('process-receipt', {
+          body: { receiptId: receipt.id },
+        });
+        if (error) {
+          // Most commonly the function simply isn't deployed yet.
+          return this.updateReceipt(receipt.id, {
+            processing_status: 'needs_review',
+            review_note: NEEDS_REVIEW_NOTE,
+          });
+        }
+        result = data as ProcessorResult;
       }
-      const result = (await res.json()) as {
-        configured?: boolean;
-        status?: string;
-        merchant?: string;
-        amount?: number | null;
-        date?: string | null;
-        text?: string | null;
-        error?: string;
-      };
-      if (!result.configured || result.status === 'needs_review') {
-        const note =
-          result.error ||
-          'Automatic receipt scanning isn\u2019t configured for this project yet, so no details were extracted. Review the file and enter the details manually.';
-        return this.updateReceipt(receipt.id, { processing_status: 'needs_review', review_note: note });
-      }
-      return this.updateReceipt(receipt.id, {
-        processing_status: 'completed',
-        merchant: result.merchant ?? '',
-        amount: toNumOrNull(result.amount),
-        receipt_date: result.date ?? null,
-        extracted_text: result.text ?? null,
-        review_note: null,
-      });
     } catch {
-      const note = 'The receipt scanner is not responding right now. You can review and enter the details manually.';
-      return this.updateReceipt(receipt.id, { processing_status: 'needs_review', review_note: note });
+      return this.updateReceipt(receipt.id, {
+        processing_status: 'needs_review',
+        review_note: UNAVAILABLE_NOTE,
+      });
     }
+
+    if (!result || !result.configured || result.status !== 'completed') {
+      return this.updateReceipt(receipt.id, {
+        processing_status: 'needs_review',
+        review_note: result?.error || NEEDS_REVIEW_NOTE,
+      });
+    }
+
+    return this.updateReceipt(receipt.id, {
+      processing_status: 'completed',
+      merchant: result.merchant ?? '',
+      amount: toNumOrNull(result.amount),
+      receipt_date: result.date ?? null,
+      extracted_text: result.text ?? null,
+      review_note: null,
+    });
   }
 
   async updateReceipt(id: string, patch: Partial<Receipt>): Promise<Receipt> {
@@ -821,14 +869,14 @@ export class SupabaseBackend implements FinanceBackend {
           throw new Error('Could not add this income. Please try again.');
         }
       }
-      return this.updateTransactionRow(client, t.id, {
+      return this.updateTransactionRow(client, user.id, t.id, {
         status: 'reviewed',
         category,
         classification: 'business',
       });
     }
 
-    return this.updateTransactionRow(client, t.id, {
+    return this.updateTransactionRow(client, user.id, t.id, {
       status: 'ignored',
       classification: 'personal',
       category: t.category ?? t.suggested_category ?? 'Other',
@@ -837,10 +885,19 @@ export class SupabaseBackend implements FinanceBackend {
 
   private async updateTransactionRow(
     client: NonNullable<typeof supabase>,
+    userId: string,
     id: string,
     patch: Record<string, unknown>
   ): Promise<ImportedTransaction> {
-    const { data, error } = await client.from('transactions').update(patch).eq('id', id).select('*').single();
+    // RLS already scopes this, but filtering explicitly keeps the guarantee
+    // local to the query (defense in depth).
+    const { data, error } = await client
+      .from('transactions')
+      .update(patch)
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select('*')
+      .single();
     if (error) throw new Error('Could not update this transaction. Please try again.');
     return toTransaction(data as Record<string, unknown>);
   }

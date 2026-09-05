@@ -3,6 +3,7 @@ import { useSubscription } from '../context/SubscriptionContext';
 import { getBackend } from '../backend';
 import { cn } from '../lib/cn';
 import { formatNumber } from '../lib/format';
+import { PRO_MONTHLY_LABEL, PRO_YEARLY_LABEL, PRO_YEARLY_SAVING_PCT } from '../lib/constants';
 import { Badge, Button } from './ui/primitives';
 import { Modal } from './ui/overlays';
 import { IconSparkles } from './icons';
@@ -117,9 +118,9 @@ export function UpgradePromptModal({
             <p className="mt-1 text-ink-500">CSV export</p>
           </div>
           <div className="border-l border-ink-100 pl-4">
-            <p className="font-medium text-ink-900">$9.99<span className="text-xs text-ink-500">/mo</span></p>
-            <p className="mt-1 text-ink-500">or $79/year</p>
-            <p className="mt-1 text-xs text-emerald-700">Save ~34% annually</p>
+            <p className="font-medium text-ink-900">{PRO_MONTHLY_LABEL}<span className="text-xs text-ink-500">/mo</span></p>
+            <p className="mt-1 text-ink-500">or {PRO_YEARLY_LABEL}/year</p>
+            <p className="mt-1 text-xs text-emerald-700">Save ~{PRO_YEARLY_SAVING_PCT}% annually</p>
           </div>
         </div>
         {paymentsConfigured ? (

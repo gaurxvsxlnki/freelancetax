@@ -12,7 +12,12 @@
  */
 import { newId } from '../lib/id';
 import { todayISO, toISO } from '../lib/format';
-import { FREE_EXPENSES_PER_MONTH, FREE_RECEIPT_SCANS_PER_MONTH, MAX_RECEIPT_BYTES_LOCAL } from '../lib/constants';
+import {
+  FREE_EXPENSES_PER_MONTH,
+  FREE_RECEIPT_SCANS_PER_MONTH,
+  MAX_RECEIPT_BYTES_LOCAL,
+  validateReceiptFile,
+} from '../lib/constants';
 import type {
   CategoryOverride,
   ExpenseEntry,
@@ -410,14 +415,9 @@ export class LocalBackend implements FinanceBackend {
   async uploadReceipt(file: File): Promise<Receipt> {
     const user = requireLocalUser();
     const name = file.name.toLowerCase();
-    const isImage = /\.(jpe?g|png|webp)$/.test(name);
     const isPdf = /\.pdf$/.test(name);
-    if (!isImage && !isPdf) {
-      throw new Error('Please upload a JPG, PNG, WebP, or PDF file.');
-    }
-    if (file.size > MAX_RECEIPT_BYTES_LOCAL) {
-      throw new Error('This file is too large for demo mode (max 2.5 MB). Try a smaller image.');
-    }
+    const check = validateReceiptFile(file, MAX_RECEIPT_BYTES_LOCAL);
+    if (!check.ok) throw new Error(check.error);
     const usage = await this.getUsage();
     if (usage.receiptScansLimit !== null && usage.receiptScansUsed >= usage.receiptScansLimit) {
       throw new Error(
@@ -478,14 +478,9 @@ export class LocalBackend implements FinanceBackend {
     const existing = rows.find((r) => r.id === id);
     if (!existing) throw new Error('This receipt no longer exists.');
     const name = file.name.toLowerCase();
-    const isImage = /\.(jpe?g|png|webp)$/.test(name);
     const isPdf = /\.pdf$/.test(name);
-    if (!isImage && !isPdf) {
-      throw new Error('Please upload a JPG, PNG, WebP, or PDF file.');
-    }
-    if (file.size > MAX_RECEIPT_BYTES_LOCAL) {
-      throw new Error('This file is too large for demo mode (max 2.5 MB). Try a smaller image.');
-    }
+    const check = validateReceiptFile(file, MAX_RECEIPT_BYTES_LOCAL);
+    if (!check.ok) throw new Error(check.error);
     const dataUrl = await toDataUrl(file);
     localStorage.setItem(fileKey(user.id, id), dataUrl);
     // A replacement is a fresh scan: clear previously extracted details.

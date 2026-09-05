@@ -6,12 +6,12 @@
  * Response: { imported }
  */
 
-import { json, requireUser, userHasProAccess } from '../_shared/stripe.ts';
+import { json, preflight, readJson, requireUser, userHasProAccess } from '../_shared/stripe.ts';
 import { adminClient, openToken } from '../_shared/plaid.ts';
 import { ingestCharges, stripeIncomeConfigured } from '../_shared/stripe-income.ts';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') return preflight();
   try {
     const configError = stripeIncomeConfigured();
     if (configError) return json({ error: configError }, 501);
@@ -20,13 +20,8 @@ Deno.serve(async (req) => {
       return json({ error: 'Income connections are a Pro feature. Upgrade to Pro to keep syncing.' }, 403);
     }
 
-    let accountId = '';
-    try {
-      const body = (await req.json()) as { accountId?: string };
-      accountId = String(body.accountId ?? '');
-    } catch {
-      accountId = '';
-    }
+    const { accountId: rawAccountId } = await readJson<{ accountId?: string }>(req);
+    const accountId = String(rawAccountId ?? '');
     if (!accountId) return json({ error: 'Please choose an income account to sync.' }, 400);
 
     const admin = adminClient();
