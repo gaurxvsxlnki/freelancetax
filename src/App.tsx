@@ -27,7 +27,7 @@ function FullPageLoader() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black">
       <div className="flex flex-col items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-700 text-white shadow-card">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-neu-md">
           <svg viewBox="0 0 32 32" className="h-6 w-6" fill="none" aria-hidden="true">
             <path
               d="M16 6v20M10 12h8a4 4 0 0 1 0 8h-8"

@@ -164,7 +164,7 @@ export function SettingsPage() {
             <Field label="Approximate annual income" required>
               <Select options={INCOME_RANGES} placeholder="Select a range" value={incomeRange} onChange={(e) => setIncomeRange(e.target.value)} />
             </Field>
-            <div className="space-y-3 rounded-lg border border-white/[0.07] bg-white/[0.03] p-4">
+            <div className="space-y-3 rounded-lg border border-white/[0.06] bg-black/20 shadow-well p-4">
               <Toggle
                 checked={worksFromHome}
                 onChange={setWorksFromHome}
@@ -213,7 +213,7 @@ export function SettingsPage() {
                 <Select options={['USD']} value="USD" disabled aria-label="Currency (USD only)" />
               </Field>
             </div>
-            <div className="rounded-lg border border-white/[0.07] bg-white/[0.03] p-2">
+            <div className="rounded-lg border border-white/[0.06] bg-black/20 shadow-well p-2">
               <Toggle
                 checked={emailReminders}
                 onChange={setEmailReminders}
@@ -221,7 +221,7 @@ export function SettingsPage() {
                 description="Show quarterly deadline reminders in the app. Email delivery is not part of FreelanceTax yet — see Help for the current status."
               />
             </div>
-            <div className="space-y-1 rounded-lg border border-white/[0.07] bg-white/[0.03] p-2">
+            <div className="space-y-1 rounded-lg border border-white/[0.06] bg-black/20 shadow-well p-2">
               <p className="px-2 pt-2 text-[12px] font-medium text-ink-500">
                 Dashboard alerts
               </p>

@@ -167,7 +167,7 @@ export function CategoryBreakdown({
             <span className="truncate font-medium text-ink-700">{item.label}</span>
             <span className="tabular shrink-0 text-ink-500">{valueFormatter(item.value)}</span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.07]">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/40 shadow-well">
             <div
               className="h-full rounded-full transition-all duration-500 ease-ios"
               style={{

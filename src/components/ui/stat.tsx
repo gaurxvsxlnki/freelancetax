@@ -26,7 +26,8 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'group rounded-2xl border border-white/[0.07] bg-surface p-5 shadow-card',
+        'group rounded-2xl border border-white/[0.07] bg-surface p-5',
+        'shadow-[inset_0_1px_0_0_rgb(255_255_255/0.045),0_1px_2px_0_rgb(0_0_0/0.6)]',
         'transition-colors duration-200 ease-ios hover:border-white/[0.12]',
         className
       )}
@@ -42,7 +43,7 @@ export function StatCard({
         {icon && (
           <div
             className={cn(
-              'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-inset [&>svg]:h-5 [&>svg]:w-5',
+              'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-neu ring-1 ring-inset [&>svg]:h-5 [&>svg]:w-5',
               iconTones[tone]
             )}
           >

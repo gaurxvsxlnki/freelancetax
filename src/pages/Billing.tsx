@@ -252,7 +252,7 @@ export function BillingPage() {
         </Card>
       </div>
 
-      <div className="mt-6 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4 text-xs leading-relaxed text-ink-500">
+      <div className="mt-6 rounded-xl border border-white/[0.06] bg-black/20 shadow-well p-4 text-xs leading-relaxed text-ink-500">
         Payments are processed securely by Stripe — FreelanceTax never stores your card details. You
         can update payment methods, download invoices, and cancel from Stripe's billing portal.
       </div>

@@ -228,7 +228,7 @@ export function LandingPage() {
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
             <li key={f.title} className="rounded-2xl border border-white/[0.07] p-6 shadow-card">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-700 text-white [&>svg]:h-5 [&>svg]:w-5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-700 text-white shadow-neu [&>svg]:h-5 [&>svg]:w-5">
                 <f.icon />
               </div>
               <h3 className="mt-4 font-semibold text-ink-900">{f.title}</h3>

@@ -18,14 +18,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   // Filled accent — the single strongest element on any screen.
   primary:
-    'bg-brand-700 text-white shadow-sm hover:bg-brand-800 active:bg-brand-600 disabled:hover:bg-brand-700',
+    'bg-brand-700 text-white shadow-neu-md hover:bg-brand-800 active:bg-brand-600 active:shadow-neu-inset disabled:hover:bg-brand-700 disabled:shadow-none',
   // Translucent dark with a hairline border (macOS secondary button).
   secondary:
-    'bg-white/[0.06] text-ink-900 ring-1 ring-inset ring-white/10 backdrop-blur-sm hover:bg-white/[0.10] active:bg-white/[0.14] disabled:hover:bg-white/[0.06]',
+    'bg-white/[0.06] text-ink-900 ring-1 ring-inset ring-white/10 shadow-neu backdrop-blur-sm hover:bg-white/[0.10] active:bg-white/[0.04] active:shadow-neu-inset disabled:hover:bg-white/[0.06] disabled:shadow-none',
   ghost: 'text-ink-700 hover:bg-white/[0.06] hover:text-ink-900 active:bg-white/[0.10] disabled:hover:bg-transparent',
   danger:
-    'bg-red-600 text-white shadow-sm hover:bg-red-500 active:bg-red-600 disabled:hover:bg-red-600',
-  subtle: 'bg-brand-700/15 text-brand-900 hover:bg-brand-700/25 active:bg-brand-700/30',
+    'bg-red-600 text-white shadow-neu-md hover:bg-red-500 active:bg-red-600 active:shadow-neu-inset disabled:hover:bg-red-600 disabled:shadow-none',
+  subtle: 'bg-brand-700/15 text-brand-900 shadow-neu hover:bg-brand-700/25 active:bg-brand-700/20 active:shadow-neu-inset',
 };
 
 // Pill geometry: fully rounded at every size, generous touch targets.
@@ -156,6 +156,8 @@ export function Card({ title, subtitle, actions, padded = true, className, child
     <section
       className={cn(
         'rounded-2xl border border-white/[0.07] bg-surface shadow-card',
+        // Restrained emboss: a single inner top highlight, no outer glow.
+        'shadow-[inset_0_1px_0_0_rgb(255_255_255/0.045),0_1px_2px_0_rgb(0_0_0/0.6)]',
         className
       )}
       {...rest}
@@ -293,7 +295,7 @@ export function SegmentedControl<T extends string>({
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-full bg-white/[0.06] p-0.5 ring-1 ring-inset ring-white/[0.07]',
+        'inline-flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full bg-black/40 p-0.5 shadow-well ring-1 ring-inset ring-white/[0.07]',
         className
       )}
     >
@@ -308,8 +310,9 @@ export function SegmentedControl<T extends string>({
             className={cn(
               'rounded-full font-medium transition-all duration-150 ease-ios active:scale-[0.97]',
               size === 'sm' ? 'px-3 py-1 text-[12px]' : 'px-4 py-1.5 text-[13px]',
+              'whitespace-nowrap',
               active
-                ? 'bg-white/[0.13] text-ink-900 shadow-sm'
+                ? 'bg-white/[0.13] text-ink-900 shadow-neu'
                 : 'text-ink-500 hover:text-ink-700'
             )}
           >

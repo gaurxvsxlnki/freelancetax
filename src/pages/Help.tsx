@@ -93,7 +93,7 @@ export function HelpPage() {
       <Card title="Get started in 6 steps" subtitle="The fastest path from zero to organized." className="mt-6">
         <ol className="grid gap-4 sm:grid-cols-2">
           {STEPS.map((s, i) => (
-            <li key={s.title} className="flex gap-4 rounded-lg border border-white/[0.06] bg-white/[0.03] p-4">
+            <li key={s.title} className="flex gap-4 rounded-lg border border-white/[0.06] bg-black/20 shadow-well p-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-700/15 text-brand-800 [&>svg]:h-5 [&>svg]:w-5">
                 <s.icon />
               </div>

@@ -48,7 +48,7 @@ export function UsageMeter({
           {formatNumber(used)} / {formatNumber(limit)}
         </span>
       </div>
-      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-white/[0.08]">
+      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-black/40 shadow-well">
         <div
           className={cn('h-full rounded-full transition-all', atLimit ? 'bg-amber-500' : 'bg-brand-600')}
           style={{ width: `${Math.max(2, pct)}%` }}

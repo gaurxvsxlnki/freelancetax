@@ -64,7 +64,7 @@ function AuthLayout({
       <div className="flex w-full items-center justify-center px-4 py-10 sm:px-8 lg:w-1/2">
         <div className="w-full max-w-md">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-700 text-white">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white shadow-neu">
               <svg viewBox="0 0 32 32" className="h-5 w-5" fill="none" aria-hidden="true">
                 <path d="M16 6v20M10 12h8a4 4 0 0 1 0 8h-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

@@ -108,11 +108,11 @@ export function CopilotPage() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="e.g. How much did I spend on software this year?"
-                className="h-12 w-full rounded-2xl border border-white/[0.09] bg-white/[0.04] pl-11 pr-4 text-sm text-ink-900 transition-all placeholder:text-ink-400 hover:border-white/[0.14] focus:border-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-700/20"
+                className="h-12 w-full rounded-2xl border border-white/[0.09] bg-black/25 pl-11 pr-4 text-sm text-ink-900 shadow-well transition-all placeholder:text-ink-400 hover:border-white/[0.14] focus:border-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-700/20"
                 aria-label="Ask about your finances"
               />
             </div>
-            <Button type="submit" size="lg" loading={thinking} disabled={!question.trim()}>
+            <Button type="submit" size="lg" className="shrink-0" loading={thinking} disabled={!question.trim()}>
               Ask
             </Button>
           </form>
@@ -123,7 +123,7 @@ export function CopilotPage() {
                 key={s}
                 onClick={() => void ask(s)}
                 disabled={thinking}
-                className="rounded-full border border-white/[0.09] bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:border-brand-700/50 hover:bg-white/[0.07] hover:text-brand-800 disabled:opacity-60"
+                className="rounded-full border border-white/[0.09] bg-white/[0.05] px-3 py-1.5 text-xs font-medium text-ink-600 shadow-neu transition-all duration-150 ease-ios hover:border-brand-700/50 hover:bg-white/[0.08] hover:text-brand-800 active:scale-[0.97] active:shadow-neu-inset disabled:opacity-60"
               >
                 {s}
               </button>
@@ -138,9 +138,9 @@ export function CopilotPage() {
           )}
 
           {asked && answer && !thinking && (
-            <Card className="border-brand-200">
+            <Card className="border-brand-700/30">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-700 text-white">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white shadow-neu">
                   <IconBot className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">

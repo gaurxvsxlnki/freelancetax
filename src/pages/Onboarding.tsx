@@ -74,7 +74,7 @@ export function OnboardingPage() {
       <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-8 sm:px-6">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-700 text-white">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white shadow-neu">
               <svg viewBox="0 0 32 32" className="h-5 w-5" fill="none" aria-hidden="true">
                 <path d="M16 6v20M10 12h8a4 4 0 0 1 0 8h-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -140,7 +140,7 @@ export function OnboardingPage() {
               />
             </Field>
 
-            <div className="space-y-3 rounded-lg border border-white/[0.07] bg-white/[0.03] p-4">
+            <div className="space-y-3 rounded-lg border border-white/[0.06] bg-black/20 shadow-well p-4">
               <Toggle
                 checked={worksFromHome}
                 onChange={setWorksFromHome}

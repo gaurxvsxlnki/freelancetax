@@ -170,7 +170,7 @@ const TAB_BAR = [
 function MobileTabBar() {
   return (
     <nav
-      className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.08] glass pb-safe lg:hidden"
+      className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.09] glass pb-safe shadow-[0_-8px_24px_-12px_rgb(0_0_0/0.9)] lg:hidden"
       aria-label="Primary"
     >
       <div className="mx-auto flex max-w-lg items-stretch justify-around px-1">

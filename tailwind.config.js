@@ -119,12 +119,30 @@ export default {
         mono: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'monospace'],
       },
 
-      // Depth comes from light borders + soft ambient shadow, not heavy drops.
+      /*
+       * Depth comes from hairline borders + soft ambient shadow, not heavy drops.
+       *
+       * The neumorphic tokens below are deliberately RESTRAINED: on a black UI a
+       * true two-sided emboss (bright top-left / dark bottom-right) looks like
+       * plastic. Instead each surface gets a 1px inner top highlight — the way
+       * light catches the top edge of a physical control — paired with a soft
+       * ambient drop. That reads as "machined", not "puffy".
+       */
       boxShadow: {
         card: '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 0 0 0.5px rgb(255 255 255 / 0.04)',
         raised: '0 8px 24px -12px rgb(0 0 0 / 0.9), 0 0 0 0.5px rgb(255 255 255 / 0.06)',
         pop: '0 24px 60px -16px rgb(0 0 0 / 0.85), 0 0 0 0.5px rgb(255 255 255 / 0.08)',
         glow: '0 0 0 4px rgb(112 118 255 / 0.18)',
+
+        // Raised control: inner top highlight + inner bottom shade + ambient lift.
+        neu: 'inset 0 1px 0 0 rgb(255 255 255 / 0.06), inset 0 -1px 0 0 rgb(0 0 0 / 0.5), 0 1px 2px 0 rgb(0 0 0 / 0.5)',
+        // Same, slightly stronger, for primary/elevated controls.
+        'neu-md':
+          'inset 0 1px 0 0 rgb(255 255 255 / 0.09), inset 0 -1px 0 0 rgb(0 0 0 / 0.55), 0 4px 12px -4px rgb(0 0 0 / 0.7)',
+        // Pressed / recessed: light from below, shadow from above.
+        'neu-inset': 'inset 0 1px 3px 0 rgb(0 0 0 / 0.65), inset 0 -1px 0 0 rgb(255 255 255 / 0.045)',
+        // Wells that hold inputs, tracks and grouped rows.
+        well: 'inset 0 1px 2px 0 rgb(0 0 0 / 0.5)',
       },
 
       // Large, Apple-like radii.

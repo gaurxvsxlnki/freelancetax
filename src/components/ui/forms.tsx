@@ -42,10 +42,10 @@ export function Field({ label, hint, error, required, children, className }: Fie
  * selects and inputs match across Safari/Chrome/Firefox.
  */
 const controlBase =
-  'w-full appearance-none rounded-xl border border-white/[0.09] bg-white/[0.04] px-3.5 text-sm text-ink-900 ' +
+  'w-full appearance-none rounded-xl border border-white/[0.09] bg-black/25 px-3.5 text-sm text-ink-900 shadow-well ' +
   'transition-all duration-150 ease-ios ' +
-  'placeholder:text-ink-400 hover:border-white/[0.14] hover:bg-white/[0.06] ' +
-  'focus:border-brand-700 focus:bg-white/[0.06] focus:outline-none focus:ring-4 focus:ring-brand-700/20 ' +
+  'placeholder:text-ink-400 hover:border-white/[0.14] hover:bg-black/20 ' +
+  'focus:border-brand-700 focus:bg-black/20 focus:outline-none focus:ring-4 focus:ring-brand-700/20 ' +
   'disabled:cursor-not-allowed disabled:opacity-50';
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
@@ -132,7 +132,7 @@ export function Toggle({
       <span
         className={cn(
           'relative mt-0.5 inline-flex h-[30px] w-[51px] shrink-0 items-center rounded-full transition-colors duration-200 ease-ios',
-          checked ? 'bg-emerald-600' : 'bg-white/[0.14]'
+          checked ? 'bg-emerald-600 shadow-neu' : 'bg-black/40 shadow-well'
         )}
       >
         <span

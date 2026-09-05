@@ -12,6 +12,9 @@
 
   body {
     @apply bg-black text-ink-900 antialiased;
+    /* Momentum scrolling + no rubber-band overscroll chaining, like a native app. */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -105,6 +108,18 @@
     @apply transition-transform duration-150 ease-ios active:scale-[0.97];
   }
 
+  /* Recessed well that visually "holds" grouped content. Used sparingly —
+     inputs, segmented tracks and meters — to balance the raised controls. */
+  .well {
+    @apply bg-black/25 shadow-well;
+  }
+
+  /* iOS grouped-list row: full-bleed separator that insets past the leading
+     content, exactly like UITableView. */
+  .ios-row {
+    @apply relative flex items-center gap-3 px-4 py-3 transition-colors duration-150 active:bg-white/[0.06];
+  }
+
   /* iOS safe-area helpers (notch / home indicator). */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -114,6 +129,16 @@
   }
   .h-safe-bottom {
     height: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* Touch devices: hide horizontal scrollbar chrome, keep the scrolling. */
+@media (hover: none) and (pointer: coarse) {
+  .overflow-x-auto {
+    scrollbar-width: none;
+  }
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
   }
 }
 

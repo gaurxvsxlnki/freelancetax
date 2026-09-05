@@ -345,7 +345,7 @@ export function ImportsPage() {
         ) : (
           <ul className="space-y-3">
             {accounts.map((a) => (
-              <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4">
+              <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-black/20 shadow-well p-4">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-semibold text-ink-900">
@@ -458,7 +458,7 @@ export function ImportsPage() {
               </div>
             )}
 
-            <div className="overflow-x-auto">
+            <div className="hidden overflow-x-auto sm:block">
               <table className="w-full min-w-[760px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/[0.07] text-[12px] font-medium text-ink-400">
@@ -503,7 +503,7 @@ export function ImportsPage() {
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-ink-500">
                           {formatDate(t.txn_date)}
-                          <span className="ml-1.5 rounded-md bg-white/[0.07] px-1.5 py-0.5 py-0.5 text-[10px] font-medium uppercase text-ink-500">Imported</span>
+                          <span className="ml-1.5 rounded-md bg-white/[0.07] px-1.5 py-0.5 text-[10px] font-medium uppercase text-ink-500">Imported</span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="font-medium text-ink-900">{t.merchant || '—'}</div>
@@ -568,11 +568,94 @@ export function ImportsPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile: native-style stacked rows (no horizontal scrolling) */}
+            <ul className="divide-y divide-white/[0.06] sm:hidden">
+              {filtered.map((t) => {
+                const sug = suggestion(t);
+                const cat = categoryFor[t.id] ?? t.category ?? t.suggested_category ?? sug.category;
+                const classification = t.classification ?? sug.classification;
+                const account = t.account_id ? byId.get(t.account_id) : undefined;
+                return (
+                  <li key={t.id} className="px-4 py-3.5">
+                    <div className="flex items-start gap-3">
+                      {statusFilter === 'pending' && (
+                        <input
+                          type="checkbox"
+                          className="mt-1 shrink-0"
+                          aria-label={`Select ${t.merchant}`}
+                          checked={selected.has(t.id)}
+                          onChange={() => toggle(t.id)}
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline justify-between gap-3">
+                          <span className="truncate text-[15px] font-medium text-ink-900">{t.merchant || '—'}</span>
+                          <span className={cn('tabular shrink-0 text-[15px] font-semibold', t.kind === 'income' ? 'text-emerald-700' : 'text-ink-900')}>
+                            {t.kind === 'income' ? '+' : '−'}{moneyCents(t.amount)}
+                          </span>
+                        </div>
+                        <div className="mt-0.5 truncate text-[12px] text-ink-500">
+                          {formatDate(t.txn_date)}
+                          {account ? ` · ${account.account_name}` : ''}
+                        </div>
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                          <Badge tone={CLASS_TONE[classification]}>{CLASSIFICATION_LABEL[classification]}</Badge>
+                          {t.status !== 'pending' && (
+                            <Badge tone={t.status === 'reviewed' ? 'green' : 'neutral'}>
+                              {t.status === 'reviewed' ? 'Added' : 'Ignored'}
+                            </Badge>
+                          )}
+                        </div>
+                        {t.status === 'pending' && (
+                          <div className="mt-3 space-y-2">
+                            <Select
+                              options={categoryOptions}
+                              value={cat}
+                              onChange={(e) => setCategoryFor((p) => ({ ...p, [t.id]: e.target.value }))}
+                              className="h-9 w-full text-xs"
+                              aria-label={`Category for ${t.merchant}`}
+                            />
+                            <div className="flex flex-wrap items-center gap-2">
+                              {t.kind === 'expense' ? (
+                                <Button
+                                  size="sm"
+                                  className="flex-1"
+                                  loading={busy === `review-${t.id}`}
+                                  onClick={() => void review(t, 'business', cat)}
+                                >
+                                  {t.suggested_classification === 'personal' ? 'Add anyway' : 'Add to expenses'}
+                                </Button>
+                              ) : (
+                                <Button size="sm" className="flex-1" loading={busy === `review-${t.id}`} onClick={() => void review(t, 'income', 'Freelance')}>
+                                  Add to income
+                                </Button>
+                              )}
+                              <Button size="sm" variant="secondary" disabled={busy === `review-${t.id}`} onClick={() => void review(t, 'personal')}>
+                                Personal
+                              </Button>
+                              <button
+                                onClick={() => void review(t, 'ignore')}
+                                className="shrink-0 rounded-full p-2 text-ink-400 transition-colors hover:bg-white/[0.08] hover:text-ink-700"
+                                aria-label={`Ignore ${t.merchant}`}
+                                title="Ignore"
+                              >
+                                <IconTrash className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </>
         )}
       </Card>
 
-      <div className="mt-4 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4 text-xs leading-relaxed text-ink-500">
+      <div className="mt-4 rounded-xl border border-white/[0.06] bg-black/20 shadow-well p-4 text-xs leading-relaxed text-ink-500">
         <strong>How imports work:</strong> synced transactions arrive uncategorized and are never added
         to your records until you review them. Adding an item creates a normal expense or income
         entry (labeled Imported). Your categorization choices are remembered for future syncs.
