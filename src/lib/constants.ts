@@ -116,11 +116,11 @@ export const FREE_RECEIPT_SCANS_PER_MONTH = 5;
  * Prices or the marketing copy will lie about the amount.
  */
 export const PLAN_FEATURES = {
-  pro_monthly_price: 9.99,
-  pro_yearly_price: 79,
+  pro_monthly_price: 5,
+  pro_yearly_price: 40,
 } as const;
 
-/** "$9.99" / "$79" — trims a trailing .00 so whole dollars read cleanly. */
+/** "$5" / "$40" — trims a trailing .00 so whole dollars read cleanly. */
 export function formatPlanPrice(value: number): string {
   return Number.isInteger(value) ? `$${value}` : `$${value.toFixed(2)}`;
 }
@@ -128,16 +128,15 @@ export function formatPlanPrice(value: number): string {
 export const PRO_MONTHLY_LABEL = formatPlanPrice(PLAN_FEATURES.pro_monthly_price);
 export const PRO_YEARLY_LABEL = formatPlanPrice(PLAN_FEATURES.pro_yearly_price);
 
-/** Effective monthly cost when paying yearly, e.g. "$6.58". */
+/** Effective monthly cost when paying yearly, e.g. "$3.33". */
 export const PRO_YEARLY_PER_MONTH_LABEL = `$${(PLAN_FEATURES.pro_yearly_price / 12).toFixed(2)}`;
 
-/** Absolute saving from annual billing, e.g. "$40.88". */
-export const PRO_YEARLY_SAVING_LABEL = `$${(
-  PLAN_FEATURES.pro_monthly_price * 12 -
-  PLAN_FEATURES.pro_yearly_price
-).toFixed(2)}`;
+/** Absolute saving from annual billing, e.g. "$20". */
+export const PRO_YEARLY_SAVING_LABEL = formatPlanPrice(
+  Math.round((PLAN_FEATURES.pro_monthly_price * 12 - PLAN_FEATURES.pro_yearly_price) * 100) / 100
+);
 
-/** Percentage saved by paying yearly, e.g. 34. */
+/** Percentage saved by paying yearly, e.g. 33. */
 export const PRO_YEARLY_SAVING_PCT = Math.round(
   (1 - PLAN_FEATURES.pro_yearly_price / (PLAN_FEATURES.pro_monthly_price * 12)) * 100
 );

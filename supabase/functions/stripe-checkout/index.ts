@@ -3,8 +3,8 @@
  *
  * Env:
  *   STRIPE_SECRET_KEY        (required to be active)
- *   STRIPE_PRICE_MONTHLY     (price id for $9.99/month)
- *   STRIPE_PRICE_YEARLY      (price id for $79/year)
+ *   STRIPE_PRICE_MONTHLY     (price id for the $5/month Pro plan)
+ *   STRIPE_PRICE_YEARLY      (price id for the $40/year Pro plan)
  *   APP_URL                  (origin for success/cancel redirects, e.g. https://app.example.com)
  *
  * Request body: { interval: "month" | "year" }

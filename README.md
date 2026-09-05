@@ -141,7 +141,7 @@ Nothing about billing works until you supply your own credentials; the app
 never invents price ids and reports a clear configuration error otherwise.
 
 1. Create two **recurring Prices** in your Stripe account — one monthly, one
-   yearly. The UI advertises $9.99/month and $79/year
+   yearly. The UI advertises $5/month and $40/year
    (`PLAN_FEATURES` in `src/lib/constants.ts`); change that constant if you
    price differently, since Stripe is the source of truth for what is charged.
 2. Add a webhook endpoint pointing at
