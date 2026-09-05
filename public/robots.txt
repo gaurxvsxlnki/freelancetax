@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /income
+Disallow: /expenses
+Disallow: /receipts
+Disallow: /deductions
+Disallow: /tax-estimate
+Disallow: /reports
+Disallow: /settings
+Disallow: /billing
+Disallow: /onboarding
+Disallow: /reset-password
+
+Sitemap: /sitemap.xml

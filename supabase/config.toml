@@ -1,0 +1,45 @@
+# Supabase configuration for FreelanceTax.
+# Copy to your own project: change project_id to match your local project id
+# (or remove it entirely when deploying to a hosted project).
+
+project_id = "freelancetax"
+
+[functions.process_receipt]
+# The edge function verifies the caller itself and is meant to be invoked by
+# signed-in users with their access token, so JWT verification is enabled.
+verify_jwt = true
+
+[functions.stripe-checkout]
+verify_jwt = true
+
+[functions.stripe-portal]
+verify_jwt = true
+
+[functions.stripe-cancel]
+verify_jwt = true
+
+[functions.stripe-webhook]
+# Stripe posts events without our JWT; the function verifies the Stripe
+# signature itself.
+verify_jwt = false
+
+[functions.plaid-link]
+verify_jwt = true
+
+[functions.plaid-exchange]
+verify_jwt = true
+
+[functions.plaid-sync]
+verify_jwt = true
+
+[functions.plaid-disconnect]
+verify_jwt = true
+
+[functions.stripe-income-connect]
+verify_jwt = true
+
+[functions.stripe-income-sync]
+verify_jwt = true
+
+[functions.stripe-income-disconnect]
+verify_jwt = true
